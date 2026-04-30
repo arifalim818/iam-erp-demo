@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IAM for Enterprise ERP — Interactive Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Neue+Haas+Grotesk+Display+Pro:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#A100FF; --deep:#7B00CC; --mid:#C84BFF; --lav:#F3E5FF; --lav2:#E8D0FF;
+  --white:#FFFFFF; --off:#FAFAFA; --light:#F5F0FF;
+  --text:#1A1A2E; --muted:#6B6B8A; --border:#E5E0F0;
+  --green:#00875A; --green-l:#E3FFF4; --red:#D63031; --red-l:#FFF0F0;
+  --amber:#D68910; --amber-l:#FFF8E8; --teal:#0077B6; --teal-l:#E8F4FD;
+  --shadow:0 2px 16px rgba(161,0,255,0.08); --shadow-lg:0 8px 40px rgba(161,0,255,0.12);
+  --radius:12px; --radius-lg:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--text);line-height:1.6;overflow-x:hidden;}
+
+/* ── SCREENS ─────────────────────────────── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+
+/* ── NAV ─────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;}
+.nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;}
+.nav-logo-mark{width:32px;height:32px;background:var(--purple);border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.nav-logo-mark svg{width:18px;height:18px;fill:white;}
+.nav-title{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-0.01em;}
+.nav-subtitle{font-size:11px;color:var(--muted);margin-top:-2px;}
+.nav-actions{display:flex;gap:8px;align-items:center;}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;transition:all 0.2s;}
+.nav-btn:hover{border-color:var(--purple);color:var(--purple);}
+.nav-btn.primary{background:var(--purple);border-color:var(--purple);color:white;}
+.nav-btn.primary:hover{background:var(--deep);}
+
+/* ══════════════════════════════════════════
+   INTRO SCREEN
+══════════════════════════════════════════ */
+#s-intro{background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;position:relative;overflow:hidden;}
+.intro-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.intro-bg-circle{position:absolute;border-radius:50%;opacity:0.06;}
+.intro-bg-circle:nth-child(1){width:800px;height:800px;background:var(--purple);top:-200px;right:-200px;}
+.intro-bg-circle:nth-child(2){width:500px;height:500px;background:var(--mid);bottom:-100px;left:-100px;}
+.intro-bg-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:0.4;}
+.intro-content{position:relative;z-index:1;text-align:center;max-width:780px;width:100%;display:flex;flex-direction:column;align-items:center;}
+.intro-tag{display:inline-flex;align-items:center;gap:8px;background:var(--lav);border:1px solid var(--lav2);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--deep);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:1rem;animation:fadeDown 0.6s ease both;}
+.intro-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.4);}}
+.intro-h1{font-family:'Inter',sans-serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:700;line-height:1.05;letter-spacing:-0.03em;color:var(--text);margin-bottom:0.8rem;animation:fadeUp 0.7s 0.1s ease both;}
+.intro-h1 .accent{color:var(--purple);}
+.intro-h1 .line2{display:block;}
+.intro-sub{font-size:1.1rem;color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto 1.5rem;animation:fadeUp 0.7s 0.2s ease both;}
+.intro-stats{display:flex;gap:0;margin-bottom:1.5rem;animation:fadeUp 0.7s 0.3s ease both;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:white;box-shadow:var(--shadow);}
+.intro-stat{flex:1;padding:0.9rem 1.2rem;text-align:center;border-right:1px solid var(--border);}
+.intro-stat:last-child{border-right:none;}
+.intro-stat-num{font-size:1.6rem;font-weight:700;color:var(--purple);letter-spacing:-0.02em;line-height:1;}
+.intro-stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;font-weight:500;}
+.intro-cta{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;margin:0 auto;width:100%;animation:fadeUp 0.7s 0.4s ease both;}
+.btn-xl{padding:14px 36px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.25s;letter-spacing:-0.01em;}
+.btn-xl.primary{background:var(--purple);color:white;box-shadow:0 4px 20px rgba(161,0,255,0.3);}
+.btn-xl.primary:hover{background:var(--deep);transform:translateY(-2px);box-shadow:0 8px 28px rgba(161,0,255,0.35);}
+.btn-xl.outline{background:white;color:var(--purple);border:1.5px solid var(--purple);}
+.btn-xl.outline:hover{background:var(--lav);transform:translateY(-2px);}
+.intro-scroll{display:none;position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;animation:fadeUp 1s 0.8s ease both;}
+.intro-scroll-line{width:1px;height:32px;background:linear-gradient(var(--purple),transparent);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══════════════════════════════════════════
+   LANDING SCREEN
+══════════════════════════════════════════ */
+#s-landing{padding-top:60px;background:var(--white);}
+.landing-hero{background:linear-gradient(135deg,var(--text) 0%,#2D1B69 100%);padding:4rem 3rem;position:relative;overflow:hidden;}
+.landing-hero-bg{position:absolute;inset:0;background-image:radial-gradient(circle at 80% 50%,rgba(161,0,255,0.15) 0%,transparent 60%);}
+.landing-hero-content{max-width:1100px;margin:0 auto;position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:3rem;flex-wrap:wrap;}
+.landing-hero-left h1{font-size:2.2rem;font-weight:700;color:white;line-height:1.15;letter-spacing:-0.02em;margin-bottom:0.8rem;}
+.landing-hero-left h1 span{color:var(--mid);}
+.landing-hero-left p{color:rgba(255,255,255,0.65);font-size:14px;max-width:420px;line-height:1.6;}
+.landing-hero-right{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-metric{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:1rem 1.4rem;text-align:center;min-width:100px;}
+.hero-metric-num{font-size:1.8rem;font-weight:700;color:white;line-height:1;}
+.hero-metric-num.danger{color:#FF6B6B;}
+.hero-metric-num.ok{color:#4ECDC4;}
+.hero-metric-label{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+
+/* Filter & grid */
+.landing-body{max-width:1100px;margin:0 auto;padding:2.5rem 2rem 5rem;}
+.section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2rem;}
+.filter-chip{background:var(--off);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+.filter-chip:hover{border-color:var(--purple);color:var(--purple);}
+.filter-chip.active{background:var(--purple);border-color:var(--purple);color:white;}
+.uc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+.uc-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;}
+.uc-card:hover{border-color:var(--purple);box-shadow:var(--shadow-lg);transform:translateY(-3px);}
+.uc-card-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--mid));opacity:0;transition:opacity 0.25s;}
+.uc-card:hover .uc-card-accent{opacity:1;}
+.uc-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.uc-num-badge{background:var(--lav);color:var(--deep);font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:0.05em;}
+.risk-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:0.04em;}
+.risk-pill.high{background:var(--red-l);color:var(--red);}
+.risk-pill.med{background:var(--amber-l);color:var(--amber);}
+.uc-card-domain{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500;}
+.uc-card-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3;letter-spacing:-0.01em;}
+.uc-card-pitch{font-size:13px;color:var(--muted);line-height:1.55;}
+.uc-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
+.uc-card-impact{font-size:12px;font-weight:600;color:var(--green);}
+.uc-card-arrow{width:28px;height:28px;border-radius:50%;background:var(--lav);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:13px;transition:all 0.2s;}
+.uc-card:hover .uc-card-arrow{background:var(--purple);color:white;}
+
+/* ══════════════════════════════════════════
+   DETAIL SCREEN
+══════════════════════════════════════════ */
+#s-detail{padding-top:60px;background:var(--off);}
+.detail-wrap{max-width:960px;margin:0 auto;padding:3rem 2rem 6rem;}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:2rem;}
+.breadcrumb a{color:var(--purple);cursor:pointer;text-decoration:none;}
+.breadcrumb-sep{color:var(--border);}
+.detail-header{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow);}
+.detail-tags{display:flex;gap:8px;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;}
+.detail-tag-num{background:var(--purple);color:white;font-size:11px;font-weight:700;padding:4px 12px;border-radius:5px;letter-spacing:0.04em;}
+.detail-tag-domain{background:var(--lav);color:var(--deep);font-size:11px;font-weight:600;padding:4px 12px;border-radius:5px;}
+.detail-tag-risk{font-size:11px;font-weight:700;padding:4px 10px;border-radius:5px;}
+.detail-tag-risk.high{background:var(--red-l);color:var(--red);}
+.detail-tag-risk.med{background:var(--amber-l);color:var(--amber);}
+.detail-h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:var(--text);letter-spacing:-0.02em;margin-bottom:1rem;line-height:1.2;}
+.detail-elevator{background:var(--lav);border-left:4px solid var(--purple);border-radius:0 8px 8px 0;padding:1rem 1.4rem;font-size:15px;color:var(--text);line-height:1.65;margin-bottom:1.5rem;}
+.detail-impact-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+.impact-card{background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;}
+.impact-card-val{font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;line-height:1;}
+.impact-card-val.red{color:var(--red);}
+.impact-card-val.green{color:var(--green);}
+.impact-card-val.purple{color:var(--purple);}
+.impact-card-val.amber{color:var(--amber);}
+.impact-card-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:5px;font-weight:500;}
+
+/* Tabs */
+.tabs-wrap{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+.tabs-nav{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:all 0.2s;}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.tab:hover:not(.active){color:var(--text);}
+.tab-body{padding:2rem;}
+.tab-panel{display:none;animation:fadeIn 0.25s ease;}
+.tab-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* Story */
+.story-card{background:linear-gradient(135deg,var(--lav) 0%,#EBD6FF 100%);border:1px solid var(--lav2);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;}
+.story-eyebrow{font-size:10px;font-weight:700;color:var(--deep);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.story-eyebrow::before{content:'';width:16px;height:2px;background:var(--purple);display:inline-block;}
+.story-text{font-size:15px;line-height:1.8;color:var(--text);}
+
+/* Problem/Fix */
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem;}
+@media(max-width:580px){.pf-grid{grid-template-columns:1fr;}}
+.pf-box{border-radius:var(--radius);padding:1.5rem;}
+.pf-problem{background:var(--red-l);border:1px solid rgba(214,48,49,0.2);}
+.pf-fix{background:var(--green-l);border:1px solid rgba(0,135,90,0.2);}
+.pf-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.pf-problem .pf-label{color:var(--red);}
+.pf-fix .pf-label{color:var(--green);}
+.pf-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:700;}
+.pf-problem .pf-icon{background:var(--red);}
+.pf-fix .pf-icon{background:var(--green);}
+.pf-text{font-size:14px;line-height:1.65;color:var(--text);}
+
+/* Key points */
+.points-list{display:flex;flex-direction:column;gap:10px;}
+.point{display:flex;gap:14px;align-items:flex-start;padding:1rem 1.2rem;background:var(--off);border:1px solid var(--border);border-radius:10px;transition:border-color 0.2s;}
+.point:hover{border-color:var(--lav2);}
+.point-num{min-width:28px;height:28px;border-radius:50%;background:var(--purple);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.point-text{font-size:14px;line-height:1.65;color:var(--text);}
+
+/* Before/After */
+.ba-wrap{overflow-x:auto;}
+.ba-table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;font-size:13px;}
+.ba-table th{padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;}
+.ba-th-persona{background:var(--lav);color:var(--deep);}
+.ba-th-before{background:var(--red-l);color:var(--red);}
+.ba-th-after{background:var(--green-l);color:var(--green);}
+.ba-table td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
+.ba-table tr:last-child td{border-bottom:none;}
+.ba-table tr:nth-child(even) td{background:var(--off);}
+.ba-td-persona{font-weight:600;color:var(--deep);}
+.ba-td-before{color:var(--red);}
+.ba-td-after{color:var(--green);}
+
+/* Q&A */
+.qa-list{display:flex;flex-direction:column;gap:10px;}
+.qa-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.2s;}
+.qa-item.open{border-color:var(--lav2);}
+.qa-q{padding:14px 16px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:white;gap:12px;}
+.qa-q:hover{background:var(--off);}
+.qa-toggle{width:24px;height:24px;border-radius:50%;background:var(--lav);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;flex-shrink:0;transition:all 0.2s;}
+.qa-item.open .qa-toggle{background:var(--purple);color:white;transform:rotate(45deg);}
+.qa-a{display:none;padding:14px 16px;font-size:14px;line-height:1.65;color:var(--muted);background:var(--off);border-top:1px solid var(--border);}
+.qa-item.open .qa-a{display:block;}
+
+/* Takeaway */
+.takeaway{background:linear-gradient(135deg,var(--purple) 0%,var(--deep) 100%);border-radius:var(--radius-lg);padding:2rem 2.5rem;text-align:center;margin-top:1.5rem;}
+.takeaway p{font-size:1.05rem;color:white;line-height:1.6;font-weight:500;}
+
+/* Nav between UCs */
+.uc-nav{display:flex;gap:10px;margin-top:1.5rem;justify-content:space-between;flex-wrap:wrap;}
+.uc-nav-btn{background:white;border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+.uc-nav-btn:hover{border-color:var(--purple);color:var(--purple);}
+.uc-nav-btn.accent{background:var(--purple);border-color:var(--purple);color:white;}
+.uc-nav-btn.accent:hover{background:var(--deep);}
+
+/* ══════════════════════════════════════════
+   DASHBOARD SCREEN
+══════════════════════════════════════════ */
+#s-dashboard{padding-top:60px;background:var(--off);}
+.dash-wrap{max-width:1100px;margin:0 auto;padding:3rem 2rem 6rem;}
+.dash-hero{background:linear-gradient(135deg,var(--text) 0%,#2D1B69 100%);border-radius:var(--radius-lg);padding:2.5rem;margin-bottom:2rem;position:relative;overflow:hidden;}
+.dash-hero-bg{position:absolute;inset:0;background-image:radial-gradient(circle at 90% 50%,rgba(161,0,255,0.2) 0%,transparent 60%);}
+.dash-hero-content{position:relative;z-index:1;}
+.dash-hero h2{font-size:1.8rem;font-weight:700;color:white;letter-spacing:-0.02em;margin-bottom:6px;}
+.dash-hero p{color:rgba(255,255,255,0.6);font-size:14px;}
+.dash-hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(161,0,255,0.2);border:1px solid rgba(161,0,255,0.4);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;}
+
+/* Metric cards */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:2rem;}
+.metric-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow);}
+.metric-card-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;}
+.metric-card-val{font-size:2rem;font-weight:700;letter-spacing:-0.02em;line-height:1;margin-bottom:4px;}
+.metric-card-val.danger{color:var(--red);}
+.metric-card-val.ok{color:var(--green);}
+.metric-card-val.purple{color:var(--purple);}
+.metric-card-val.amber{color:var(--amber);}
+.metric-card-sub{font-size:12px;color:var(--muted);}
+.metric-card-trend{font-size:11px;font-weight:600;margin-top:6px;}
+.metric-card-trend.up{color:var(--green);}
+.metric-card-trend.down{color:var(--red);}
+
+/* Controls panel */
+.controls-panel{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;margin-bottom:2rem;box-shadow:var(--shadow);}
+.controls-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;}
+.controls-panel-title{font-size:14px;font-weight:600;color:var(--text);}
+.controls-panel-sub{font-size:12px;color:var(--muted);}
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.control-item{display:flex;align-items:center;justify-content:space-between;background:var(--off);border:1px solid var(--border);border-radius:8px;padding:12px 14px;transition:border-color 0.2s;}
+.control-item.on{border-color:var(--lav2);background:var(--lav);}
+.control-item-left{display:flex;flex-direction:column;gap:2px;}
+.control-item-name{font-size:13px;font-weight:500;color:var(--text);}
+.control-item-impact{font-size:11px;color:var(--muted);}
+.control-item.on .control-item-impact{color:var(--green);}
+.toggle{position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:11px;transition:0.3s;}
+.toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:0.3s;}
+.toggle input:checked~.toggle-track{background:rgba(161,0,255,0.25);}
+.toggle input:checked~.toggle-track::before{transform:translateX(18px);background:var(--purple);}
+
+/* Risk bars */
+.risk-section{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;box-shadow:var(--shadow);margin-bottom:2rem;}
+.risk-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.risk-section-title{font-size:14px;font-weight:600;color:var(--text);}
+.risk-legend{display:flex;gap:14px;}
+.risk-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.risk-legend-dot{width:8px;height:8px;border-radius:50%;}
+.risk-legend-dot.high{background:var(--red);}
+.risk-legend-dot.med{background:var(--amber);}
+.risk-legend-dot.low{background:var(--green);}
+.risk-rows{display:flex;flex-direction:column;gap:12px;}
+.risk-row{display:grid;grid-template-columns:180px 1fr 70px 100px;align-items:center;gap:14px;}
+@media(max-width:640px){.risk-row{grid-template-columns:120px 1fr 50px;}.risk-row-impact{display:none;}}
+.risk-row-label{font-size:13px;color:var(--text);font-weight:500;}
+.risk-bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.risk-bar-fill{height:100%;border-radius:4px;transition:width 1s ease;}
+.risk-bar-fill.high{background:var(--red);}
+.risk-bar-fill.med{background:var(--amber);}
+.risk-bar-fill.low{background:var(--green);}
+.risk-pct{font-size:12px;font-weight:700;text-align:right;}
+.risk-pct.high{color:var(--red);}
+.risk-pct.med{color:var(--amber);}
+.risk-pct.low{color:var(--green);}
+.risk-row-impact{font-size:11px;color:var(--muted);text-align:right;}
+
+/* Financial breakdown */
+.fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:2rem;}
+.fin-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow);}
+.fin-card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:16px;}
+.fin-card-icon.red{background:var(--red-l);}
+.fin-card-icon.green{background:var(--green-l);}
+.fin-card-icon.amber{background:var(--amber-l);}
+.fin-card-icon.purple{background:var(--lav);}
+.fin-card-val{font-size:1.6rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1;margin-bottom:4px;}
+.fin-card-label{font-size:12px;color:var(--muted);line-height:1.4;}
+
+/* CTA */
+.dash-cta{background:linear-gradient(135deg,var(--purple),var(--deep));border-radius:var(--radius-lg);padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;}
+.dash-cta-text h3{font-size:1.2rem;font-weight:700;color:white;margin-bottom:4px;}
+.dash-cta-text p{font-size:13px;color:rgba(255,255,255,0.7);}
+.dash-cta-actions{display:flex;gap:10px;flex-shrink:0;}
+.btn-sm{padding:10px 20px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+.btn-sm.white{background:white;color:var(--purple);border:none;}
+.btn-sm.white:hover{background:var(--lav);}
+.btn-sm.ghost{background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.3);}
+.btn-sm.ghost:hover{background:rgba(255,255,255,0.2);}
+
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,0.5);z-index:500;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:2rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:white;border-radius:var(--radius-lg);padding:2.5rem;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);animation:scaleIn 0.25s ease;}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+.modal h3{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.01em;}
+.modal p{font-size:14px;color:var(--muted);margin-bottom:1.8rem;line-height:1.6;}
+.modal-form{display:flex;flex-direction:column;gap:12px;}
+.modal-input{padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color 0.2s;}
+.modal-input:focus{border-color:var(--purple);}
+.modal-actions{display:flex;gap:10px;margin-top:8px;}
+.modal-submit{flex:1;background:var(--purple);color:white;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.2s;}
+.modal-submit:hover{background:var(--deep);}
+.modal-cancel{background:var(--off);color:var(--muted);border:1px solid var(--border);padding:12px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;}
+.modal-cancel:hover{border-color:var(--muted);}
+.modal-close{position:absolute;top:1rem;right:1rem;background:var(--off);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center;}
+
+/* ── UTILS ────────────────────────────── */
+.divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0;}
+.spacer{height:1.5rem;}
+
+:root{
+  --purple:#A100FF;--deep:#7B00CC;--mid:#C84BFF;--lav:#F3E5FF;--lav2:#E8D0FF;
+  --white:#FFFFFF;--off:#FAFAFA;--light:#F8F4FF;
+  --text:#1A1A2E;--muted:#6B6B8A;--border:#E5E0F0;
+  --green:#00875A;--green-l:#E3FFF4;--red:#D63031;--red-l:#FFF0F0;
+  --amber:#D68910;--amber-l:#FFF8E8;--teal:#0077B6;--teal-l:#E8F4FD;
+  --blue:#1565C0;--blue-l:#E8F0FE;
+  --shadow:0 2px 16px rgba(161,0,255,0.08);--shadow-lg:0 8px 40px rgba(161,0,255,0.14);
+  --radius:12px;--radius-lg:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--off);color:var(--text);line-height:1.6;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-logo{width:32px;height:32px;background:var(--purple);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:800;}
+.nav-title{font-size:14px;font-weight:600;color:var(--text);}
+.nav-subtitle{font-size:11px;color:var(--muted);}
+.nav-tabs{display:flex;gap:4px;}
+.nav-tab{background:none;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+.nav-tab:hover{background:var(--lav);color:var(--purple);}
+.nav-tab.active{background:var(--purple);color:white;}
+
+/* PAGE SECTIONS */
+.section{display:none;min-height:calc(100vh - 60px);padding:3rem 2.5rem 5rem;}
+.section.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-inner{max-width:1100px;margin:0 auto;}
+.page-header{margin-bottom:3rem;}
+.page-tag{display:inline-flex;align-items:center;gap:6px;background:var(--lav);border:1px solid var(--lav2);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--deep);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;}
+.page-title{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1.15;margin-bottom:0.8rem;}
+.page-title span{color:var(--purple);}
+.page-desc{font-size:15px;color:var(--muted);max-width:600px;line-height:1.7;}
+
+/* CARDS */
+.card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;box-shadow:var(--shadow);}
+.card-sm{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;box-shadow:var(--shadow);}
+
+/* ═══════════════════════════════════════
+   SECTION 1 — ARCHITECTURE
+═══════════════════════════════════════ */
+.arch-intro{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:2.5rem;}
+.arch-intro-card{border-radius:var(--radius);padding:1.4rem;text-align:center;}
+.arch-intro-card.iam{background:var(--lav);border:1px solid var(--lav2);}
+.arch-intro-card.iga{background:var(--blue-l);border:1px solid #B3CCF7;}
+.arch-intro-card.pam{background:var(--green-l);border:1px solid #9FE1CB;}
+.arch-intro-icon{font-size:1.8rem;margin-bottom:8px;}
+.arch-intro-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.arch-intro-card.iam .arch-intro-title{color:var(--deep);}
+.arch-intro-card.iga .arch-intro-title{color:var(--blue);}
+.arch-intro-card.pam .arch-intro-title{color:var(--green);}
+.arch-intro-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* Architecture diagram */
+.arch-diagram{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;box-shadow:var(--shadow);overflow-x:auto;}
+.arch-diagram svg{display:block;margin:0 auto;width:100%;max-width:900px;}
+
+/* ERP integrations grid */
+.erp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:2rem;}
+.erp-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.4rem;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+.erp-card:hover{border-color:var(--purple);box-shadow:var(--shadow);}
+.erp-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.erp-name{font-size:14px;font-weight:600;color:var(--text);}
+.erp-desc{font-size:11px;color:var(--muted);}
+.erp-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;margin-top:3px;display:inline-block;}
+.erp-badge.native{background:var(--green-l);color:var(--green);}
+.erp-badge.federated{background:var(--blue-l);color:var(--blue);}
+.erp-badge.api{background:var(--lav);color:var(--deep);}
+
+/* Control flow */
+.flow-section{margin-top:2.5rem;}
+.flow-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1rem;}
+.flow-steps{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:8px;}
+.flow-step{display:flex;align-items:center;flex-shrink:0;}
+.flow-box{background:white;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;text-align:center;min-width:130px;position:relative;cursor:pointer;transition:all 0.2s;}
+.flow-box:hover{border-color:var(--purple);box-shadow:var(--shadow);}
+.flow-box.purple{background:var(--purple);border-color:var(--purple);}
+.flow-box.blue{background:var(--blue-l);border-color:#B3CCF7;}
+.flow-box.green{background:var(--green-l);border-color:#9FE1CB;}
+.flow-box.amber{background:var(--amber-l);border-color:#F5D37A;}
+.flow-box.teal{background:var(--teal-l);border-color:#90CDE8;}
+.flow-box-num{font-size:10px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;}
+.flow-box.purple .flow-box-num,.flow-box.purple .flow-box-label{color:white;}
+.flow-box.blue .flow-box-num{color:var(--blue);}
+.flow-box.green .flow-box-num{color:var(--green);}
+.flow-box.amber .flow-box-num{color:var(--amber);}
+.flow-box.teal .flow-box-num{color:var(--teal);}
+.flow-box-label{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.flow-arrow{color:var(--muted);font-size:20px;padding:0 8px;flex-shrink:0;}
+
+/* ═══════════════════════════════════════
+   SECTION 2 — ROADMAP
+═══════════════════════════════════════ */
+.roadmap-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2.5rem;}
+@media(max-width:700px){.roadmap-overview{grid-template-columns:1fr 1fr;}}
+.phase-card{border-radius:var(--radius);padding:1.4rem;border:2px solid transparent;cursor:pointer;transition:all 0.25s;}
+.phase-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.phase-card.active-phase{border-color:var(--purple);}
+.phase-1{background:linear-gradient(135deg,#F3E5FF,#EAD0FF);}
+.phase-2{background:linear-gradient(135deg,#E8F0FE,#D3E3FC);}
+.phase-3{background:linear-gradient(135deg,#E3FFF4,#C6F6E4);}
+.phase-4{background:linear-gradient(135deg,#FFF8E8,#FFE9A0);}
+.phase-num{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.phase-1 .phase-num{color:var(--deep);}
+.phase-2 .phase-num{color:var(--blue);}
+.phase-3 .phase-num{color:var(--green);}
+.phase-4 .phase-num{color:var(--amber);}
+.phase-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.phase-duration{font-size:12px;color:var(--muted);}
+.phase-detail{display:none;background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow);margin-bottom:2rem;}
+.phase-detail.visible{display:block;animation:fadeIn 0.25s ease;}
+.phase-detail-header{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.phase-detail-badge{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:white;flex-shrink:0;}
+.phase-detail-title{font-size:1.2rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;}
+.phase-detail-sub{font-size:13px;color:var(--muted);}
+.phase-columns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;}
+@media(max-width:700px){.phase-columns{grid-template-columns:1fr;}}
+.phase-col-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.phase-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.phase-item-dot{width:6px;height:6px;border-radius:50%;margin-top:7px;flex-shrink:0;}
+.phase-item-text{font-size:13px;color:var(--text);line-height:1.5;}
+.phase-outcomes{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);}
+.phase-outcomes-title{font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+.phase-outcomes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+.outcome-chip{background:var(--green-l);border:1px solid rgba(0,135,90,0.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:500;}
+
+/* Timeline bar */
+.timeline-bar{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow);margin-top:2rem;}
+.timeline-bar-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1.5rem;}
+.timeline-track{position:relative;padding-left:0;}
+.timeline-months{display:grid;grid-template-columns:repeat(12,1fr);gap:0;margin-bottom:8px;}
+.timeline-month{font-size:10px;color:var(--muted);text-align:center;font-weight:500;}
+.timeline-phases{display:flex;flex-direction:column;gap:10px;}
+.timeline-phase-row{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;}
+.timeline-phase-label{font-size:12px;font-weight:600;color:var(--text);}
+.timeline-phase-bar-track{position:relative;height:28px;background:var(--off);border-radius:6px;overflow:hidden;}
+.timeline-phase-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;font-weight:600;color:white;transition:width 0.8s ease;}
+
+/* ═══════════════════════════════════════
+   SECTION 3 — ROI CALCULATOR
+═══════════════════════════════════════ */
+.roi-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:800px){.roi-layout{grid-template-columns:1fr;}}
+.roi-inputs{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow);}
+.roi-results{display:flex;flex-direction:column;gap:14px;}
+.input-group{margin-bottom:1.5rem;}
+.input-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.input-val{font-size:13px;font-weight:700;color:var(--purple);}
+input[type=range]{width:100%;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer;-webkit-appearance:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--purple);cursor:pointer;border:2px solid white;box-shadow:0 1px 4px rgba(161,0,255,0.3);}
+.input-sublabel{font-size:11px;color:var(--muted);margin-top:4px;}
+.result-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;}
+.result-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.result-icon.red{background:var(--red-l);}
+.result-icon.green{background:var(--green-l);}
+.result-icon.purple{background:var(--lav);}
+.result-icon.amber{background:var(--amber-l);}
+.result-icon.teal{background:var(--teal-l);}
+.result-val{font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;line-height:1;margin-bottom:3px;}
+.result-val.red{color:var(--red);}
+.result-val.green{color:var(--green);}
+.result-val.purple{color:var(--purple);}
+.result-val.amber{color:var(--amber);}
+.result-val.teal{color:var(--teal);}
+.result-label{font-size:12px;color:var(--muted);line-height:1.4;}
+.roi-summary{background:linear-gradient(135deg,var(--purple),var(--deep));border-radius:var(--radius-lg);padding:2rem;color:white;margin-top:1rem;}
+.roi-summary-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.7;margin-bottom:1rem;}
+.roi-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.roi-summary-item{border-left:2px solid rgba(255,255,255,0.3);padding-left:12px;}
+.roi-summary-val{font-size:1.6rem;font-weight:700;letter-spacing:-0.02em;line-height:1;}
+.roi-summary-label{font-size:11px;opacity:0.7;margin-top:3px;}
+.roi-breakdown{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;box-shadow:var(--shadow);margin-top:1.5rem;}
+.roi-breakdown-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1.2rem;}
+.breakdown-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
+.breakdown-row:last-child{border-bottom:none;}
+.breakdown-label{font-size:13px;color:var(--text);}
+.breakdown-bar-wrap{flex:1;display:flex;align-items:center;gap:10px;}
+.breakdown-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.breakdown-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.breakdown-val{font-size:13px;font-weight:700;min-width:80px;text-align:right;}
+
+/* Assumption notes */
+.assumptions{background:var(--lav);border:1px solid var(--lav2);border-radius:var(--radius);padding:1.2rem 1.4rem;margin-top:1.5rem;}
+.assumptions-title{font-size:11px;font-weight:700;color:var(--deep);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
+.assumptions-text{font-size:12px;color:var(--muted);line-height:1.7;}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav" style="display:none;">
+  <a class="nav-brand" onclick="goToLanding()">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 20 20"><path d="M10 2L2 7v6l8 5 8-5V7L10 2zm0 2.5L16 8l-6 3.5L4 8l6-3.5zM3.5 9.2l6 3.5v5.1l-6-3.7V9.2zm13 0v4.9l-6 3.7v-5.1l6-3.5z"/></svg>
+    </div>
+    <div>
+      <div class="nav-title">IAM for ERP</div>
+      <div class="nav-subtitle">Interactive Demo</div>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="goToLanding()">Use Cases</button>
+    <button class="nav-btn" onclick="showScreen('s-dashboard')">Risk Dashboard</button>
+    <button class="nav-btn" onclick="showScreen('s-arch')">Architecture</button>
+    <button class="nav-btn" onclick="showScreen('s-roadmap')">Roadmap</button>
+    <button class="nav-btn" onclick="showScreen('s-roi')">ROI Calculator</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     INTRO SCREEN
+══════════════════════════════════════════ -->
+<div id="s-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-bg-grid"></div>
+    <div class="intro-bg-circle"></div>
+    <div class="intro-bg-circle"></div>
+  </div>
+  <div class="intro-content">
+    <div class="intro-tag"><span class="intro-tag-dot"></span> Identity & Access Management</div>
+    <h1 class="intro-h1">
+      The identity risk<br>
+      <span class="accent">inside your ERP</span><br>
+      <span class="line2">is already there.</span>
+    </h1>
+    <p class="intro-sub">Explore 15 real-world ERP access risks across 12 domains — and see exactly how IAM, IGA, and PAM resolve each one.</p>
+    <div class="intro-stats">
+      <div class="intro-stat"><div class="intro-stat-num">$4.9M</div><div class="intro-stat-label">Avg cost of breach</div></div>
+      <div class="intro-stat"><div class="intro-stat-num">74%</div><div class="intro-stat-label">From insider access</div></div>
+      <div class="intro-stat"><div class="intro-stat-num">287</div><div class="intro-stat-label">Avg SoD conflicts</div></div>
+      <div class="intro-stat"><div class="intro-stat-num">340hrs</div><div class="intro-stat-label">SOX prep saved</div></div>
+    </div>
+    <div class="intro-cta">
+      <button class="btn-xl primary" onclick="goToLanding()">Browse Use Cases</button>
+      <button class="btn-xl outline" onclick="goToDashboard()">View Risk Dashboard</button>
+    </div>
+  </div>
+  <div class="intro-scroll"><div class="intro-scroll-line"></div>Scroll to explore</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     LANDING SCREEN
+══════════════════════════════════════════ -->
+<div id="s-landing" class="screen">
+  <div class="landing-hero">
+    <div class="landing-hero-bg"></div>
+    <div class="landing-hero-content">
+      <div class="landing-hero-left">
+        <h1>15 Use Cases.<br><span>12 Domains.</span> One Solution.</h1>
+        <p>Real ERP access risks — with real fraud scenarios, before/after controls, and financial impact data for each one.</p>
+      </div>
+      <div class="landing-hero-right">
+        <div class="hero-metric"><div class="hero-metric-num danger" id="hm-high">8</div><div class="hero-metric-label">High Risk</div></div>
+        <div class="hero-metric"><div class="hero-metric-num" style="color:#FFA930;" id="hm-med">4</div><div class="hero-metric-label">Med Risk</div></div>
+        <div class="hero-metric"><div class="hero-metric-num ok" id="hm-resolved">0</div><div class="hero-metric-label">Resolved</div></div>
+        <div class="hero-metric"><div class="hero-metric-num" style="color:white;">$2.1B</div><div class="hero-metric-label">ERP fraud/yr</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="landing-body">
+    <div class="section-label">Filter by Domain</div>
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-chip active" onclick="filterUC('all',this)">All (15)</button>
+      <button class="filter-chip" onclick="filterUC('Finance & Accounting',this)">Finance & Accounting</button>
+      <button class="filter-chip" onclick="filterUC('Procure-to-Pay (P2P)',this)">Procure-to-Pay</button>
+      <button class="filter-chip" onclick="filterUC('Order-to-Cash (O2C)',this)">Order-to-Cash</button>
+      <button class="filter-chip" onclick="filterUC('HR / Human Capital Management',this)">HR / HCM</button>
+      <button class="filter-chip" onclick="filterUC('Supply Chain Management',this)">Supply Chain</button>
+      <button class="filter-chip" onclick="filterUC('Manufacturing',this)">Manufacturing</button>
+      <button class="filter-chip" onclick="filterUC('Project Management',this)">Project Mgmt</button>
+      <button class="filter-chip" onclick="filterUC('Analytics & Reporting',this)">Analytics</button>
+      <button class="filter-chip" onclick="filterUC('Vendor & Partner Collaboration',this)">Vendor Collab</button>
+      <button class="filter-chip" onclick="filterUC('Shared Services / GBS',this)">Shared Services</button>
+      <button class="filter-chip" onclick="filterUC('Asset Management',this)">Asset Mgmt</button>
+      <button class="filter-chip" onclick="filterUC('Compliance & Risk Management',this)">Compliance</button>
+    </div>
+    <div class="uc-grid" id="uc-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DETAIL SCREEN
+══════════════════════════════════════════ -->
+<div id="s-detail" class="screen">
+  <div class="detail-wrap" id="detail-content"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DASHBOARD SCREEN
+══════════════════════════════════════════ -->
+<div id="s-dashboard" class="screen">
+  <div class="dash-wrap">
+    <div class="dash-hero">
+      <div class="dash-hero-bg"></div>
+      <div class="dash-hero-content">
+        <div class="dash-hero-tag">Live Risk Simulator</div>
+        <h2>ERP Access Risk Dashboard</h2>
+        <p>Toggle IAM controls to see how risk exposure and financial impact change across all 12 ERP domains.</p>
+      </div>
+    </div>
+    <div class="metrics-row" id="dash-metrics"></div>
+    <div class="fin-grid" id="fin-grid"></div>
+    <div class="controls-panel">
+      <div class="controls-panel-header">
+        <div>
+          <div class="controls-panel-title">IAM Control Layers — Toggle to simulate protection</div>
+          <div class="controls-panel-sub">Each control reduces exposure across the relevant domains</div>
+        </div>
+      </div>
+      <div class="controls-grid" id="controls-grid"></div>
+    </div>
+    <div class="risk-section">
+      <div class="risk-section-header">
+        <div class="risk-section-title">Risk exposure by domain</div>
+        <div class="risk-legend">
+          <div class="risk-legend-item"><div class="risk-legend-dot high"></div>High</div>
+          <div class="risk-legend-item"><div class="risk-legend-dot med"></div>Medium</div>
+          <div class="risk-legend-item"><div class="risk-legend-dot low"></div>Protected</div>
+        </div>
+      </div>
+      <div class="risk-rows" id="risk-rows"></div>
+    </div>
+    <div class="dash-cta">
+      <div class="dash-cta-text">
+        <h3>Ready to assess your ERP access risk?</h3>
+        <p>Book a session with our IAM team — we'll map these controls to your specific ERP environment.</p>
+      </div>
+      <div class="dash-cta-actions">
+        
+        <button class="btn-sm ghost" onclick="goToLanding()">Browse Use Cases</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const UCS = [
+  {num:"01",domain:"Finance & Accounting",name:"Journal Entry Posting",risk:"high",impact:"$340K avg fraud prevented",
+   impactData:{atRisk:"$2.4M",saved:"$340K",hours:"480hrs",score:"92%"},
+   elevator:"Anyone who can create a journal entry can also post it — meaning one person can move money in the general ledger with no one checking.",
+   story:"A Finance Analyst worked late every Friday posting journal entries that moved funds between cost centres. No alert fired. No one knew — until auditors asked, three months later.",
+   problem:"One person can create AND post journal entries. They can move funds or adjust the P&L with no second check — ever.",
+   fix:"IAM enforces that the creator and approver of every journal entry are always two different people. IGA separates the roles. PAM records every approval session.",
+   points:["The ERP does not care if the same person creates and approves a transaction. IAM adds the check the ERP does not have.","This is Segregation of Duties (SoD). The creator and the approver must always be different people, for every single entry.","IGA is the engine that enforces this. When someone's role changes, the separation updates automatically — no manual work.","For large entries, the approver must re-authenticate (step-up MFA). This prevents rubber-stamping.","PAM records the approval session — screen, keystrokes, who approved, when and why. That is your SOX audit evidence."],
+   before:[["Finance Analyst","Creates and posts entries alone — no second check"],["Finance Controller","Informally reviews entries — no formal gate"],["Auditor","Manually assembles SAP logs — incomplete evidence"]],
+   after:[["Finance Analyst","Can only create — posting routes to the Controller automatically"],["Finance Controller","Receives workflow approval — step-up MFA required"],["Auditor","Single dashboard — full chain of custody — always ready"]],
+   qa:[["What if the Finance Controller is on leave?","A backup approver is designated in IGA. The workflow routes to them automatically. No IT ticket needed."],["Does this slow down month-end close?","No — access is pre-configured. Close is actually faster because nobody is chasing IT for emergency access grants."],["What if there is a genuine emergency?","PAM grants a time-limited elevation — maximum 4 hours — with full session recording. It auto-revokes at end of window."]],
+   takeaway:"SOX finding eliminated. Zero GL fraud possible with creator-approver separation enforced automatically."},
+  {num:"02",domain:"Finance & Accounting",name:"Bank Detail Changes",risk:"high",impact:"$147K+ per incident blocked",
+   impactData:{atRisk:"$147K",saved:"$220K",hours:"120hrs",score:"98%"},
+   elevator:"If anyone on the AP team can change a vendor's bank account and no alert fires — the next payment run goes wherever the fraudster pointed it.",
+   story:"A clerk received a spoofed email from a vendor requesting a bank account update. She updated it. Three days later, $147,000 went to a fraudster's account. By the time the real vendor called, the money was gone.",
+   problem:"Any AP clerk can change a vendor's bank account number with no approval, no alert, and no second check. The next payment run is redirected automatically.",
+   fix:"Every bank detail change triggers an immediate alert to the Finance Director, requires AP Manager approval via a PAM-recorded session, and checks for upcoming scheduled payments.",
+   points:["Bank detail changes are the highest-risk action in AP — most systems treat them like updating a phone number.","The fix: immediate alert to Finance leadership, a second person must approve, and a full session recording.","The system checks: is a large payment scheduled to this vendor in the next 72 hours? If yes — automatic escalation to Treasury.","This is Business Email Compromise fraud — the most financially damaging type of cyber fraud. These controls close the window completely.","The dual approval adds about 15 minutes. That 15 minutes prevents six-figure losses."],
+   before:[["AP Clerk","Changes any vendor bank account alone — no alert, no approval"],["AP Manager","Does not know a change happened until the next payment run"],["Finance Director","Finds out about fraud when the vendor calls — weeks later"]],
+   after:[["AP Clerk","Initiates only — cannot proceed without a second approver"],["AP Manager","Receives real-time alert — approves via PAM-recorded session"],["Finance Director","Notified immediately on every bank change — can stop the run"]],
+   qa:[["What if it is a legitimate change from a real vendor?","The process still takes 15 minutes. Legitimate changes go through — just with a second pair of eyes."],["How do we know the AP Manager will spot a fraudulent request?","The notification shows old and new account side by side, plus the timing of the next scheduled payment."],["Are PAM session recordings personal data under GDPR?","Recordings are stored securely, access-controlled, and retained per your data retention policy — typically 24 months."]],
+   takeaway:"Payment redirection fraud window closed. Every bank change: dual-approved, alerted, session-recorded."},
+  {num:"03",domain:"Procure-to-Pay (P2P)",name:"Vendor Onboarding",risk:"high",impact:"$1.2M ghost vendor fraud stopped",
+   impactData:{atRisk:"$1.2M",saved:"$340K",hours:"200hrs",score:"95%"},
+   elevator:"If one person can create a vendor, raise orders against them, and approve the invoices — they can pay themselves. That is ghost vendor fraud.",
+   story:"An audit found 14 vendor records created by the same procurement officer who had also raised POs and approved invoices against them. Three had no registered address. Total fraudulent payments: $340,000.",
+   problem:"One procurement officer can create a vendor, raise a PO, and approve the invoice — the entire payment cycle in single hands, unchecked.",
+   fix:"Vendors verify their identity through a governed portal before entering the ERP. IGA ensures the vendor creator cannot raise orders or approve invoices against that vendor.",
+   points:["Ghost vendor fraud requires no hacking — just one person with too much access.","Vendors must register through a verified portal — company registration checked, bank account confirmed, sanctions screening run.","IGA enforces P2P SoD: the person who created the vendor is automatically blocked from raising POs or approving invoices against them.","The vendor becomes a governed external identity — scoped access, named business owner, expiry date at contract end.","This eliminates the ghost vendor fraud cycle structurally — not just as a policy."],
+   before:[["Procurement Officer","Creates vendor, raises PO, approves invoice — unchecked"],["Vendor","Shared team credentials — access never expires"],["Auditor","Cannot reconstruct the vendor creation chain"]],
+   after:[["Procurement Officer","Invites vendor to portal only — IGA creates the record — P2P SoD enforced"],["Vendor","Individual MFA login — scoped to own transactions — expires at contract end"],["Auditor","Full IGA record: who created, who approved, when, why"]],
+   qa:[["What if a legitimate vendor won't do the verification?","Any vendor with real credentials can complete it in minutes. It is a standard company registration and bank account check."],["What about emergency vendor creation?","A fast-track exists — but still requires AP Manager approval and triggers a post-creation review within 48 hours."],["How does this handle existing vendors?","Existing vendors are reviewed over a 90-day migration period. No immediate disruption."]],
+   takeaway:"Ghost vendor fraud structurally impossible. Every vendor verified, every P2P cycle separated, every identity governed."},
+  {num:"04",domain:"Procure-to-Pay (P2P)",name:"Purchase Order Approval",risk:"med",impact:"$155K unauthorised approvals blocked",
+   impactData:{atRisk:"$155K",saved:"$80K",hours:"100hrs",score:"82%"},
+   elevator:"Every promotion adds approval authority. None gets removed. Someone who should approve POs up to $25,000 ends up approving $180,000 — and the ERP doesn't know the difference.",
+   story:"A facilities manager was promoted three times. Old approval authority was never removed. He ended up approving POs up to $180,000 — against a policy limit of $25,000. He approved 14 POs last quarter that exceeded his actual authority.",
+   problem:"Managers accumulate PO approval authority across role changes. Old limits are never removed. Policy says one thing — the ERP enforces another.",
+   fix:"Access Management connects directly to HR. When a role changes, the approval limit updates automatically — the new limit applied, the old limit removed. No accumulation possible.",
+   points:["Approval authority should reflect who you are today — not every previous role. Without IAM, it reflects both.","The HR system is the source of truth. When HR updates a job title, ERP approval limits update automatically.","The ERP release strategy is a PAM-protected configuration. Nobody can quietly change the approval chain.","Conflicts of interest are checked. If an approver has a relationship with the vendor, the system flags it before the PO goes through.","Temporary delegation has an expiry date — it does not become permanent."],
+   before:[["Department Manager","Carries approval authority from multiple previous roles — approves beyond policy limit"],["Procurement Director","Unaware of accumulated authority gaps until the audit"],["Internal Audit","Finds accumulated authority gaps during annual review"]],
+   after:[["Department Manager","Authority derived from current HR role only — excess approvals impossible"],["Procurement Director","Receives escalation for above-limit POs — quarterly reconciliation report"],["Internal Audit","Real-time dashboard — gaps identified and corrected proactively"]],
+   qa:[["What if a manager genuinely needs authority beyond their grade?","A formal exception process exists — Procurement Director and CFO must approve. IGA logs the justification and sets a review date."],["How quickly does HR-to-ERP sync happen?","Within 24 hours of any HRIS change."],["Can ERP admins work around this?","The release strategy is PAM-protected — any change requires dual approval and a recorded session."]],
+   takeaway:"Approval authority always matches the current role. Accumulation impossible. Policy enforced in real time."},
+  {num:"05",domain:"Order-to-Cash (O2C)",name:"Customer Credit Management",risk:"med",impact:"$280K bad debt exposure eliminated",
+   impactData:{atRisk:"$280K",saved:"$400K",hours:"80hrs",score:"78%"},
+   elevator:"If the Sales team can influence credit limits for their own customers, the revenue target wins every time — and bad debt follows.",
+   story:"34 customers received credit limit increases two weeks before large orders. In 19 cases, the increase was requested by the Sales Manager for that territory. Three customers defaulted — $280,000 in unrecoverable bad debt.",
+   problem:"Sales managers can influence or request credit increases for their own customers — timed just before large orders. Revenue motive overrides credit risk assessment.",
+   fix:"Sales and Credit roles are mutually exclusive. A Sales Manager cannot access credit screens. A Credit Manager cannot access sales pipeline data. The system enforces this with no override.",
+   points:["The Sales team is incentivised to sell. The Credit team is incentivised to manage risk. Those incentives must be structurally separated.","IAM makes Sales and Credit roles mutually exclusive. A Sales Manager who clicks on a credit screen gets access denied.","The system automatically correlates credit changes with the open order queue. Large order placed in the last 72 hours? Alert goes to Finance Director.","Temporary credit increases have mandatory expiry dates — the system enforces the rollback automatically.","For changes above a threshold, the Finance Director must approve via a step-up authenticated PAM session."],
+   before:[["Sales Manager","Can influence or request credit increases for own customers"],["Credit Manager","Sets limits with limited oversight — temporary changes never expire"],["Finance Director","Unaware of changes until bad debt appears in the monthly report"]],
+   after:[["Sales Manager","Cannot access credit screens at all — roles are mutually exclusive"],["Credit Manager","Large changes require Finance Director approval — expiry enforced automatically"],["Finance Director","Notified on large changes — order correlation alert — step-up MFA approval"]],
+   qa:[["What if a customer genuinely needs a credit increase for a large order?","The Credit Manager can still approve it — they just need Finance Director sign-off above the threshold."],["Does this slow down commercial decisions?","Automated routing makes straightforward increases faster. Delay is only for those needing Finance Director review."],["How does the system correlate credit changes with orders?","IGA queries the open order queue at the time of each credit change request and compares timestamps."]],
+   takeaway:"Sales-Credit SoD eliminates commercially motivated bad debt. Credit decisions independent — structurally, not just on paper."},
+  {num:"06",domain:"HR / Human Capital Management",name:"Employee Onboarding",risk:"med",impact:"1,200 IT hours per year eliminated",
+   impactData:{atRisk:"6.3days",saved:"1,200hrs",hours:"1200hrs",score:"88%"},
+   elevator:"New hires wait days for ERP access. When it arrives, it's broader than needed — built on a team template. Delayed productivity and SoD violations from Day 1.",
+   story:"A Financial Controller joined on a Monday. She couldn't access SAP until Thursday — the week of month-end close. IT had been waiting for her manager to specify what access she needed.",
+   problem:"New hires wait 6+ days for ERP access. When it arrives, it is based on a broad team template — over-provisioned and often containing SoD violations from the start.",
+   fix:"When HR confirms a hire, IGA automatically maps the job profile to the correct ERP roles, runs a SoD check, and provisions access to be ready on the morning of Day 1.",
+   points:["The HR system is the trigger. When HR marks a hire as confirmed, IGA receives it automatically — no IT ticket, no email, no manual coordination.","IGA maps the job title, department, and grade to a pre-approved role catalogue. The right access for that job is already defined.","Before provisioning anything, IGA runs a SoD check on the proposed role set — flagging any conflicts before Day 1.","On the morning they arrive, the new hire gets an MFA enrollment email. Read-only access until enrolled. Full access after.","The Line Manager receives a confirmation of exactly what was provisioned. No need to ask IT."],
+   before:[["New Employee","Waits 3-7 days — arrives over-provisioned with template access"],["Line Manager","Raises IT ticket — chases progress — unsure what access was granted"],["IT Team","Manually provisions every new hire — inconsistent and error-prone"]],
+   after:[["New Employee","Same-day access on Day 1 — correct, role-specific, SoD-clean from first login"],["Line Manager","Receives automated confirmation with exact role set before Day 1"],["IT Team","Handles exceptions only — standard provisioning is fully automated"]],
+   qa:[["What if the job profile in HR is wrong?","IGA flags role sets that don't have a matching profile — this surfaces stale profiles for HR to clean up."],["What about roles needing special approval?","Those are flagged as requiring Line Manager or Finance Director sign-off before being included."],["What if a new hire is in a sensitive financial role?","PAM is configured from Day 1 for those users — high-risk transactions require just-in-time elevation even on their first day."]],
+   takeaway:"Day 1 access — right roles, zero SoD conflicts. Onboarding time: 6 days to 4 hours. 1,200 IT hours per year eliminated."},
+  {num:"07",domain:"HR / Human Capital Management",name:"Payroll Adjustments",risk:"high",impact:"$84K ghost employee fraud stopped",
+   impactData:{atRisk:"$84K",saved:"$84K",hours:"240hrs",score:"99%"},
+   elevator:"One payroll administrator should never be able to add an employee, set up their bank account, and run the payroll that pays them. That is the complete ghost employee fraud cycle.",
+   story:"A payroll administrator added three fictitious employees to Workday, set up bank accounts she controlled, and ran the monthly payroll that paid them. Seven months. $84,000. Discovered only because of an unusually high payroll figure.",
+   problem:"A single payroll administrator can add employees, adjust salaries, set up bank accounts, and run the payroll. One person controls the entire cycle.",
+   fix:"Three-way SoD: Data Entry, Approval, and Payroll Run are three separate roles held by three separate people. IGA enforces this as an unoverridable rule. PAM controls the payroll run itself.",
+   points:["Payroll is the highest-value recurring transaction in the business. In most organisations, it is also one of the least governed.","Three-way SoD: (1) Data Entry — adds employee records. (2) Approval — reviews and approves changes. (3) Payroll Run — executes payment. Three people, always.","IGA makes these three roles mutually exclusive. No manager can grant a single person two of these roles without HR Director and Finance Controller approval.","The payroll run is a PAM-protected event. The Payroll Controller requests elevation. HR Director and Finance Controller approve. Full session recorded.","Before the run executes, approvers receive a pre-run report showing all records added or changed since the last run."],
+   before:[["HR Payroll Admin","Can enter, approve, and execute payroll alone — complete fraud cycle possible"],["HR Manager","Informally reviews some changes — no formal approval gate"],["Payroll Controller","Runs the payroll with no additional oversight or approval"]],
+   after:[["HR Payroll Admin","Data entry only — approval and execution held by separate people — enforced automatically"],["HR Manager","Designated approver — receives workflow — step-up MFA for large salary changes"],["Payroll Controller","PAM elevation required — dual approval — runs in fully recorded session"]],
+   qa:[["What if the HR Manager and Payroll Controller are both unavailable at month-end?","Each role has a designated backup in IGA — also holding only their one role. Three-way separation maintained."],["Does this make payroll slower?","The PAM dual-approval process adds about 20 minutes. We consider that the best 20 minutes in the month."],["What about contractors brought in for year-end?","Contractor access expires on their engagement end date — IGA deactivates automatically."]],
+   takeaway:"Ghost employee fraud structurally impossible. Three-way SoD enforced. Every payroll run: dual-approved and session-recorded."},
+  {num:"08",domain:"Supply Chain Management",name:"Inventory Movements & Goods Receipt",risk:"high",impact:"$187K inventory fraud detected",
+   impactData:{atRisk:"$187K",saved:"$187K",hours:"160hrs",score:"87%"},
+   elevator:"The same P2P fraud risk in Finance exists in the warehouse. If the same person who raises a purchase order can confirm the goods arrived — they can receipt deliveries that never happened.",
+   story:"A stock reconciliation revealed a $187,000 variance across two sites. Warehouse supervisors had been posting goods receipts against POs they raised themselves. In several cases, the deliveries had never arrived.",
+   problem:"Warehouse operatives can raise purchase orders and post goods receipts against them. The same person who orders can confirm delivery — even if goods never arrived.",
+   fix:"P2P SoD enforced in the warehouse: the person who raised the PO cannot post the goods receipt against it. Location-scoped access means operatives can only post for their assigned site.",
+   points:["Warehouse P2P fraud is less visible than Finance fraud — but the mechanism is identical. The same controls apply.","When an operative tries to post a goods receipt, IGA checks in real time: did this person raise the PO? If yes — blocked and re-routed.","Location scoping means an operative at Site A cannot post transactions for Site B. Cross-site manipulation is structurally blocked.","Write-offs above a threshold trigger a dual-authorisation workflow — the Logistics Manager must approve.","Seasonal workers have access provisioned with a contract end date — auto-deactivated when the season ends."],
+   before:[["Warehouse Operative","Raises POs and posts GRs against them — P2P cycle in single hands"],["Logistics Manager","Unaware of GR-PO matches until stock reconciliation reveals a variance"],["Seasonal Worker","Retains full SAP access after the season ends"]],
+   after:[["Warehouse Operative","P2P SoD enforced — cannot post GR for own POs — automatically blocked"],["Logistics Manager","Receives dual-auth request for large write-offs — step-up MFA required"],["Seasonal Worker","Time-limited access — auto-deactivates on contract end date"]],
+   qa:[["What if only one person is available in the warehouse?","This is a genuine SoD exception — requires Logistics Director and Finance Controller approval, a compensating control documented."],["Does this slow down goods receiving?","Only when a GR conflicts with the PO raiser. For clean GRs with different people, no additional step."],["How does the system handle emergency deliveries outside business hours?","A PAM-controlled emergency exception process exists for out-of-hours receiving. Supervisor approval required."]],
+   takeaway:"Warehouse P2P fraud eliminated. Inventory variances reduced by 85% in comparable implementations."},
+  {num:"09",domain:"Manufacturing",name:"Shop Floor & Production Order Access",risk:"med",impact:"4-month investigation resolved in 3 days",
+   impactData:{atRisk:"Unattributed",saved:"400hrs",hours:"400hrs",score:"85%"},
+   elevator:"When 6 people share one kiosk login, every production entry is attributed to the same account. Quality failures and fraud cannot be traced to an individual.",
+   story:"A quality team investigated production variances for four months. Every suspicious entry pointed to the same SAP user: PRODKIOSK04. Nobody knew who had actually posted anything — because 6 different operatives shared that account.",
+   problem:"Production operatives share kiosk logins. Every action is attributed to the same shared account. When something goes wrong, it cannot be traced to a specific person.",
+   fix:"Each operative authenticates with their own RFID badge and 4-digit PIN — a 3-second process. Every action is individually attributed. Sessions auto-terminate at shift end.",
+   points:["Individual attribution on the shop floor matters for quality management, regulatory compliance, and operational intelligence — not just fraud prevention.","RFID + PIN is designed for the shop floor: fast, simple, no keyboard. Tap and enter four digits. 3 seconds.","Sessions are automatically terminated at shift boundaries. Night Shift cannot act under Day Shift's identity.","Quality inspection records are locked to read-only the moment the submitting operative ends their session. Records are immutable.","Maintenance technicians have a separate role. Production configuration is PAM-protected — requiring supervisor approval."],
+   before:[["Production Operative","Shares a kiosk account with 5 others — no individual attribution"],["Shift Supervisor","Cannot trace production variances to a specific operative"],["QA Inspector","Quality records can be modified post-submission by anyone with the shared account"]],
+   after:[["Production Operative","RFID + PIN — 3-second auth — individual attribution — auto-terminates at shift end"],["Shift Supervisor","Every action individually attributed and shift-scoped — available immediately"],["QA Inspector","Records locked on submission — immutable — individually attributed"]],
+   qa:[["What if an operative forgets or loses their RFID badge?","A supervisor can issue a temporary PIN-only session for that shift. Logged as an exception. Replacement badge within 24 hours."],["Does this integrate with SAP PP?","Yes — RFID authentication integrates with SAP PP, Oracle Manufacturing, and most major ERP systems."],["What is the training burden for operatives?","Tap badge. Enter 4-digit PIN. That is the training. Most operatives adapt in their first shift."]],
+   takeaway:"Shared kiosk accounts eliminated. Every production action individually attributed. Quality investigations resolved in days, not months."},
+  {num:"10",domain:"Project Management",name:"Project Setup, Budget & Time Reporting",risk:"med",impact:"67 orphan access accounts decommissioned",
+   impactData:{atRisk:"$800K",saved:"$200K",hours:"120hrs",score:"80%"},
+   elevator:"When a project closes, access should close with it. In most ERP systems, it does not. Former Project Managers retain access — and can still move budgets.",
+   story:"A PMO audit found 43 Project Managers with active access to projects they no longer led — including 12 formally closed projects. Three closed projects had received budget top-ups after their closure date.",
+   problem:"Project Managers retain access to projects they no longer lead — including closed projects. Former PMs can adjust budgets, reactivate closed projects, and access client financial data.",
+   fix:"IGA creates a project access container when a project is created and decommissions it when the project closes. All access — internal and external — expires with the project.",
+   points:["Project access is time-bounded by nature. It should start when the project starts and end when the project ends. IGA enforces this lifecycle automatically.","External consultants receive time-limited access tokens that expire on the project end date. Former consultants cannot access client financial data after their engagement.","Budget override is removed from the standard PM role. Any adjustment above the project baseline requires Finance Controller approval via a PAM session.","Time reporting is validated against project assignment. You cannot charge time to a project you are not formally assigned to.","When a PM leaves mid-project, IGA transfers project access to the incoming PM within 24 hours of the HRIS update."],
+   before:[["Project Manager","Retains access to closed projects — can adjust budgets independently"],["External Consultant","Retains Oracle access after project completion — indefinitely"],["Finance Controller","Unaware of budget adjustments until month-end project reports"]],
+   after:[["Project Manager","Project-scoped access — decommissioned on close — budget overrides require PAM approval"],["External Consultant","Federated time-limited token — auto-expires on project end date"],["Finance Controller","Approves all overrides via PAM session — notified on project close"]],
+   qa:[["What if a project is legitimately extended or reopened?","The Project Director requests a lifecycle extension in IGA — Finance Controller must approve. New end date set. All changes logged."],["How does this work for multi-year programmes?","Each phase is a separate project access container. Historical phases are read-only after close."],["What about confidential client data in project files?","IGA scopes access to project-specific data only. Cross-project data is invisible."]],
+   takeaway:"Project access lifecycle matches project lifecycle. Former PMs and consultants lose access automatically when the project closes."},
+  {num:"11",domain:"Analytics & Reporting",name:"Financial Report & Data Export Controls",risk:"high",impact:"Insider trading risk eliminated",
+   impactData:{atRisk:"Regulatory",saved:"$2M+",hours:"60hrs",score:"94%"},
+   elevator:"When every analyst can access every entity's financial data, one person with the wrong motive can expose earnings-sensitive information before it's public. That is an insider trading risk.",
+   story:"Two weeks before a quarterly earnings announcement, a EMEA Finance Analyst exported a group-level margin report showing APAC performance and emailed it to a former colleague at an asset management firm.",
+   problem:"Finance Analysts have access to group-wide financial data — including entities outside their remit. Exports are unmonitored. Executive reports are unrestricted.",
+   fix:"Access Management scopes analytics access to the analyst's assigned entities. Bulk exports are logged and alerted. Executive reports require PAM elevation and generate a session record.",
+   points:["For a publicly listed company, this is an insider trading risk. For any organisation, it is a GDPR data minimisation failure.","IAM applies an entity scope filter at the query level. An EMEA analyst sees EMEA data — and nothing else. Structurally, not by policy.","Any export above 500 rows triggers an alert to the Data Steward and Compliance Officer. Exports above 2,000 rows are blocked until Compliance approves.","Executive-level reports — group consolidated financials, M&A pipeline, pricing strategy — are PAM-protected. Step-up authentication creates a session record.","When an analyst changes region, IGA updates their data scope within 24 hours of the HRIS change."],
+   before:[["Finance Analyst","Access to all entities — exports unmonitored — group data visible"],["Finance Director","Access to executive reports with no additional authentication"],["Compliance Officer","Learns of data leakage from a market surveillance tip — after the fact"]],
+   after:[["Finance Analyst","Entity-scoped access — cross-entity data invisible — every export logged and alerted"],["Finance Director","PAM elevation required for executive reports — session recorded — CFO notified"],["Compliance Officer","Notified on every large export — real-time alerting — full session records"]],
+   qa:[["What if an analyst legitimately needs multi-entity access?","Multi-entity access is a formal entitlement requiring Finance Director approval. Reviewed quarterly."],["Does export monitoring affect day-to-day reporting?","Standard reports for an analyst's own entity are unaffected. Monitoring triggers on bulk extracts only."],["Can these records be used in a regulatory investigation?","Yes. PAM session records and IGA access logs are accepted as evidence by the FCA and SEC."]],
+   takeaway:"Insider trading exposure eliminated through entity-scoped access. Every export logged. Executive reports PAM-protected."},
+  {num:"12",domain:"Vendor & Partner Collaboration",name:"Supplier Portal & External Partner Access",risk:"med",impact:"47 orphan external accounts removed",
+   impactData:{atRisk:"Unknown",saved:"Compliance",hours:"180hrs",score:"76%"},
+   elevator:"When a supplier's employee leaves their company, does our system know? Does access get removed? In most organisations — no. Former employees retain indefinite access to our data.",
+   story:"A routine review found 47 portal accounts belonging to people who had left their organisations. Eight had left more than two years ago. Three were former employees of an external audit firm with access to confidential financial data.",
+   problem:"340 vendors, logistics partners, and audit firms have portal access. 47 accounts belonged to people who had already left their organisations — none removed.",
+   fix:"Every external partner receives an individual, MFA-protected, time-limited access token scoped to their own data only — with a named internal business owner responsible for quarterly review.",
+   points:["External partner identity is the most unmanaged access risk in most organisations. Employees have offboarding processes. External partners have none.","The fix: individual identities (no shared accounts), time-limited tokens (expires at contract end), and named business owners accountable for every external access.","Access is scoped by design. Logistics partners see only their own shipments. Vendors see only their own orders. Auditors see only their engagement scope.","A federated identity means vendors log in using their own company's credentials — we govern the scope and expiry of their access.","Every quarter, business owners must certify the relationship is still active. Inactive partnerships are automatically terminated."],
+   before:[["Vendor Representative","Shared team account — access persists after leaving the vendor organisation"],["External Auditor","Retains financial access after the audit engagement ends"],["IT Team","Creates and manages portal access manually — no systematic offboarding"]],
+   after:[["Vendor Representative","Individual MFA account — scoped to own orders — expires at contract end — non-transferable"],["External Auditor","Engagement-scoped access — session recorded throughout — auto-expires on engagement end"],["IT Team","Business owner model — IGA manages the lifecycle — IT handles exceptions only"]],
+   qa:[["What if a vendor representative changes jobs but we still work with the company?","The old individual's token expires. The vendor company is invited to register a new representative."],["How do we handle large vendors with many employees?","The vendor can nominate a portal administrator who manages their own team's access requests."],["What if a business owner leaves without certifying their external relationships?","IGA flags uncertified relationships. The departing owner's line manager inherits the certification responsibility."]],
+   takeaway:"Zero unmanaged external identities. Every partner individually governed, scoped, and auto-expiring."},
+  {num:"13",domain:"Shared Services / GBS",name:"Cross-Entity & Multi-Company Access",risk:"med",impact:"SOX audit preparation 60% faster",
+   impactData:{atRisk:"1,800 pts",saved:"60%",hours:"340hrs",score:"83%"},
+   elevator:"A Shared Services centre given access to all 15 entities because it was easier than working out who needed what — is not a governance model. It is a guess. And every guess is an audit finding.",
+   story:"A SOX audit identified cross-entity access as the single largest finding. Of 120 GBS agents, 97 had access to all 15 entities. When transaction data was analysed, the average agent processed in 2.3 entities.",
+   problem:"GBS agents have access to all 15 entities. On average, each processes in 2.3 of them. The other 12.7 are unused access — and an audit finding in every entity.",
+   fix:"IGA analyses monthly transaction data. Agents with zero activity in an entity for 90 days receive a de-scope recommendation. Entity access reflects actual processing workload.",
+   points:["Shared Services access was designed for operational convenience — not governance. Everyone got everything. That is the wrong starting point.","IGA connects to ERP transaction data monthly. For each agent, it calculates which entities they have actively processed in.","The de-scope recommendation goes to the Team Lead — not IT. The Team Lead confirms need or approves removal. IGA updates within 24 hours.","Cross-entity SoD rules are enforced. An agent cannot post in Entity A and approve a related transaction in Entity B for the same process.","Jurisdictional compliance is applied automatically. Agents in certain countries are blocked from entities with conflicting data residency requirements."],
+   before:[["GBS Agent","Access to all 15 entities — 12.7 unused on average — SOX finding in every one"],["Team Lead","No visibility into how many entities each agent can access"],["GBS Director","Presents a 1,800-line access matrix to every SOX audit cycle"]],
+   after:[["GBS Agent","Entity scope based on actual workload — average 2.3 entities — SOX surface dramatically reduced"],["Team Lead","Monthly IGA activity report — de-scope recommendations — certifies or removes within 24 hours"],["GBS Director","Access matches usage — SOX preparation 60% faster — findings reduced from systemic to exception"]],
+   qa:[["What if an agent needs access to a new entity for a short-term project?","Access provisioned with a defined end date. Team Lead requests it, Finance Controller approves, IGA sets the expiry."],["Does the analysis account for read-only vs posting rights?","Yes — IGA differentiates between viewing and transactional activity."],["How does this work for jurisdictions with GDPR or data residency requirements?","Jurisdictional policy rules are configured in IGA. Agents in affected locations are automatically blocked from conflicting entities."]],
+   takeaway:"GBS access shrinks from 15 entities per agent to 2.3. SOX audit surface reduced by 80%."},
+  {num:"14",domain:"Asset Management",name:"Fixed Asset Creation, Disposal & Depreciation",risk:"med",impact:"$1.2M CapEx fraud detected",
+   impactData:{atRisk:"$1.2M",saved:"$1.2M",hours:"60hrs",score:"90%"},
+   elevator:"If one person can create a fixed asset, capitalise it, and approve the invoice — they control the balance sheet entry from start to finish. That is not just a risk — it is an audit finding.",
+   story:"An external audit found three capitalised assets totalling $1.2M created outside the approved CapEx budget. The same Asset Accountant created the assets, capitalised them, and processed the supplier invoices.",
+   problem:"One Asset Accountant can create an asset, capitalise it, and process the invoices. Three assets totalling $1.2M created outside the approved CapEx budget by a single person.",
+   fix:"Asset creation and capitalisation are mutually exclusive roles. Asset disposal requires dual authorisation. The quarterly depreciation run is PAM-protected requiring CFO approval.",
+   points:["The balance sheet is a statement of trust. When one person can create, capitalise, and depreciate assets without any check, that trust is unfounded.","IGA enforces a mutually exclusive rule: the person who creates an asset record cannot post the capitalisation entry. Two separate people, always.","Asset disposal is classified as high-risk. Any disposal triggers a dual-authorisation workflow — Finance Controller and named asset owner must both approve.","The quarterly depreciation run is PAM-protected. Finance Controller requests elevation. Finance Director and CFO approve. Run executes in a fully recorded session.","Before the depreciation run, both approvers receive a pre-run report showing any parameter changes since the last run."],
+   before:[["Asset Accountant","Creates, capitalises, disposes, and runs depreciation — alone"],["Finance Controller","Informal review — no formal approval gate"],["CFO","Unaware of asset activity until the quarterly balance sheet review"]],
+   after:[["Asset Accountant","Creation only — capitalisation, disposal, and depreciation run require separate approvals"],["Finance Controller","Designated approver for capitalisation — dual approver for disposal and depreciation run"],["CFO","Approves material disposals via PAM — approves depreciation run — receives pre-run report"]],
+   qa:[["What about routine minor asset additions?","A materiality threshold applies. Assets below the threshold follow a simplified approval process."],["What is the depreciation run approval process in practice?","Finance Director and CFO review the pre-run report and approve. Total additional time: about 20 minutes."],["Does this apply to IFRS 16 right-of-use assets?","Yes — the control applies at the asset record level regardless of asset type."]],
+   takeaway:"Balance sheet protected. Creation-capitalisation SoD enforced. Depreciation run: governed, CFO-approved, session-recorded."},
+  {num:"15",domain:"Compliance & Risk Management",name:"SoD Monitoring & Audit Readiness",risk:"high",impact:"287 SoD conflicts → 19. 340hrs SOX saved.",
+   impactData:{atRisk:"287 conflicts",saved:"340hrs",hours:"340hrs",score:"97%"},
+   elevator:"Running an SoD report twice a year is not a control. It is a retrospective. Continuous monitoring is what turns SoD from a report into an actual control.",
+   story:"The SOX audit found 287 active SoD conflicts — 47 high risk. The most serious: 12 AP clerks who could both create vendors and approve payments. Audit evidence preparation took 340 hours. Every year.",
+   problem:"SoD conflicts are detected in quarterly or annual reports — months after introduced. Emergency access is never formally closed. 340 hours of staff time per SOX cycle on evidence preparation.",
+   fix:"IGA monitors the entire user population against the SoD matrix daily. Conflicts detected at the moment a role is assigned. Emergency access is time-bounded via PAM. Audit evidence generated automatically.",
+   points:["Two types of SoD controls: preventive (blocks the conflict before introduction) and detective (finds it after). Most organisations only have detective. You need both.","When a role assignment creates an SoD conflict, IGA identifies it immediately — blocking or flagging for review within 24 hours.","Emergency access goes through PAM — a defined window (4-8 hours), session recorded, auto-revoked. Internal Audit notified automatically.","The SOX evidence package is generated by IGA on demand — conflict status, change history, exceptions, compensating controls, remediation timelines.","This turns the 340-hour annual audit preparation exercise into a download. The audit team gets the same data in minutes."],
+   before:[["IT/ERP Admin","Grants emergency access — forgets to remove — conflicts accumulate silently"],["Process Owner","Unaware of SoD conflicts until the audit surfaces them"],["Internal Audit","340 hours of manual SOX evidence preparation per cycle"]],
+   after:[["IT/ERP Admin","PAM manages emergency access — time-limited — auto-revoked — auto-reported to Internal Audit"],["Process Owner","Receives daily IGA conflict report — approves exceptions with documented compensating controls"],["Internal Audit","IGA generates structured audit package on demand — preparation: hours not weeks"]],
+   qa:[["What if a conflict cannot be immediately remediated?","A formal exception process documents the conflict, the compensating control, business justification, and review date. IGA manages the exception lifecycle."],["How does this differ from SAP GRC?","SAP GRC is a detection tool — it reports on what exists. IGA is a prevention tool — it stops conflicts being introduced. They complement each other."],["What is the typical reduction in SoD conflicts after implementation?","60-80% reduction within 12 months, primarily because preventive controls stop new conflicts being introduced."]],
+   takeaway:"SoD becomes a continuous control — not an annual report. 287 conflicts reduced to 19. SOX preparation: days not months."}
+];
+
+const DOMAIN_RISKS=[
+  {name:"Finance & Accounting",pct:85,level:"high",impact:"$2.4M at risk"},
+  {name:"Procure-to-Pay",pct:78,level:"high",impact:"$1.5M at risk"},
+  {name:"Order-to-Cash",pct:62,level:"med",impact:"$280K at risk"},
+  {name:"HR / HCM",pct:90,level:"high",impact:"$1.2M at risk"},
+  {name:"Supply Chain",pct:74,level:"high",impact:"$750K at risk"},
+  {name:"Manufacturing",pct:55,level:"med",impact:"Unattributed loss"},
+  {name:"Project Management",pct:60,level:"med",impact:"$800K at risk"},
+  {name:"Analytics & Reporting",pct:70,level:"high",impact:"Regulatory exposure"},
+  {name:"Vendor Collaboration",pct:65,level:"med",impact:"Unmanaged access"},
+  {name:"Shared Services / GBS",pct:68,level:"med",impact:"SOX findings"},
+  {name:"Asset Management",pct:72,level:"med",impact:"$1.2M at risk"},
+  {name:"Compliance & Risk",pct:80,level:"high",impact:"340hrs wasted/yr"},
+];
+
+const CONTROLS=[
+  {id:"iam",label:"Identity Broker (IAM)",impact:20,detail:"Centralises authentication across all ERP systems"},
+  {id:"iga",label:"Identity Governance (IGA)",impact:30,detail:"Enforces SoD rules and manages access lifecycle"},
+  {id:"pam",label:"Privileged Access Mgmt (PAM)",impact:18,detail:"Controls and records high-risk ERP transactions"},
+  {id:"sso",label:"Single Sign-On (SSO)",impact:10,detail:"Eliminates shared and orphaned credentials"},
+  {id:"mfa",label:"Multi-Factor Authentication",impact:12,detail:"Prevents unauthorised access even with stolen passwords"},
+  {id:"lifecycle",label:"Lifecycle Automation",impact:16,detail:"Auto-provisions and deprovisions based on HR events"},
+];
+
+let ctrlState={};
+CONTROLS.forEach(c=>ctrlState[c.id]=false);
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.classList.remove('active');
+    s.style.display='none';
+  });
+  var el=document.getElementById(id);
+  el.classList.add('active');
+  el.style.display='block';
+  window.scrollTo(0,0);
+  document.getElementById('main-nav').style.display= id==='s-intro' ? 'none' : 'flex';
+  if(id==='s-dashboard')renderDashboard();
+  if(id==='s-roi'){updateROI();}
+  if(id==='s-roadmap'){showPhase(1,document.querySelector('.phase-card'));}
+}
+
+// On nav clicks, always skip intro
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('main-nav').querySelectorAll('button,a').forEach(function(el){
+    el.addEventListener('click',function(){
+      document.getElementById('s-intro').classList.remove('active');
+    });
+  });
+});
+
+function enterDemo(){showScreen('s-landing');renderUCGrid('all');}
+function goToLanding(){showScreen('s-landing');renderUCGrid('all');}
+function goToDashboard(){showScreen('s-dashboard');}
+
+function filterUC(domain,btn){
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUCGrid(domain);
+}
+
+function renderUCGrid(domain){
+  const filtered=domain==='all'?UCS:UCS.filter(u=>u.domain===domain);
+  document.getElementById('uc-grid').innerHTML=filtered.map(uc=>`
+    <div class="uc-card" onclick="openUC('${uc.num}')">
+      <div class="uc-card-accent"></div>
+      <div class="uc-card-top">
+        <span class="uc-num-badge">UC${uc.num}</span>
+        <span class="risk-pill ${uc.risk}">${uc.risk==='high'?'HIGH RISK':'MED RISK'}</span>
+      </div>
+      <div class="uc-card-domain">${uc.domain}</div>
+      <div class="uc-card-name">${uc.name}</div>
+      <div class="uc-card-pitch">${uc.elevator}</div>
+      <div class="uc-card-footer">
+        <span class="uc-card-impact">&#10003; ${uc.impact}</span>
+        <div class="uc-card-arrow">&#8594;</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openUC(num){
+  const uc=UCS.find(u=>u.num===num);
+  const idx=UCS.findIndex(u=>u.num===num);
+  const prev=idx>0?UCS[idx-1]:null;
+  const next=idx<UCS.length-1?UCS[idx+1]:null;
+  const baRows=uc.before.map((b,i)=>`<tr><td class="ba-td-persona">${b[0]}</td><td class="ba-td-before">${b[1]}</td><td class="ba-td-after">${uc.after[i]?uc.after[i][1]:''}</td></tr>`).join('');
+  document.getElementById('detail-content').innerHTML=`
+    <div class="breadcrumb">
+      <a onclick="goToLanding()">All Use Cases</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>${uc.name}</span>
+    </div>
+    <div class="detail-header">
+      <div class="detail-tags">
+        <span class="detail-tag-num">UC${uc.num}</span>
+        <span class="detail-tag-domain">${uc.domain}</span>
+        <span class="detail-tag-risk ${uc.risk}">${uc.risk==='high'?'HIGH RISK':'MEDIUM RISK'}</span>
+      </div>
+      <h2 class="detail-h2">${uc.name}</h2>
+      <div class="detail-elevator">${uc.elevator}</div>
+      <div class="detail-impact-row">
+        <div class="impact-card"><div class="impact-card-val red">${uc.impactData.atRisk}</div><div class="impact-card-label">Estimated At Risk</div></div>
+        <div class="impact-card"><div class="impact-card-val green">${uc.impactData.saved}</div><div class="impact-card-label">Recoverable Value</div></div>
+        <div class="impact-card"><div class="impact-card-val purple">${uc.impactData.hours}</div><div class="impact-card-label">Hours Saved/yr</div></div>
+        <div class="impact-card"><div class="impact-card-val amber">${uc.impactData.score}</div><div class="impact-card-label">Control Coverage</div></div>
+      </div>
+    </div>
+    <div class="tabs-wrap">
+      <div class="tabs-nav">
+        <button class="tab active" onclick="switchTab(this,'tp-story')">The Story</button>
+        <button class="tab" onclick="switchTab(this,'tp-problem')">Problem &amp; Fix</button>
+        <button class="tab" onclick="switchTab(this,'tp-points')">Key Points</button>
+        <button class="tab" onclick="switchTab(this,'tp-ba')">Before &amp; After</button>
+        <button class="tab" onclick="switchTab(this,'tp-qa')">Q &amp; A</button>
+      </div>
+      <div class="tab-body">
+        <div id="tp-story" class="tab-panel active">
+          <div class="story-card">
+            <div class="story-eyebrow">Real scenario — lead with this</div>
+            <div class="story-text">${uc.story}</div>
+          </div>
+        </div>
+        <div id="tp-problem" class="tab-panel">
+          <div class="pf-grid">
+            <div class="pf-box pf-problem"><div class="pf-label"><div class="pf-icon">!</div>The Problem</div><div class="pf-text">${uc.problem}</div></div>
+            <div class="pf-box pf-fix"><div class="pf-label"><div class="pf-icon">&#10003;</div>The Fix</div><div class="pf-text">${uc.fix}</div></div>
+          </div>
+        </div>
+        <div id="tp-points" class="tab-panel">
+          <div class="points-list">${uc.points.map((p,i)=>`<div class="point"><div class="point-num">${i+1}</div><div class="point-text">${p}</div></div>`).join('')}</div>
+        </div>
+        <div id="tp-ba" class="tab-panel">
+          <div class="ba-wrap"><table class="ba-table"><thead><tr><th class="ba-th-persona">Persona</th><th class="ba-th-before">Before IAM</th><th class="ba-th-after">After IAM</th></tr></thead><tbody>${baRows}</tbody></table></div>
+        </div>
+        <div id="tp-qa" class="tab-panel">
+          <div class="qa-list">${uc.qa.map(q=>`<div class="qa-item" onclick="this.classList.toggle('open')"><div class="qa-q">${q[0]}<div class="qa-toggle">+</div></div><div class="qa-a">${q[1]}</div></div>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway"><p>${uc.takeaway}</p></div>
+    <div class="uc-nav">
+      <div style="display:flex;gap:8px;">
+        <button class="uc-nav-btn" onclick="goToLanding()">&#8592; All Use Cases</button>
+        ${prev?`<button class="uc-nav-btn" onclick="openUC('${prev.num}')">&#8592; UC${prev.num}</button>`:''}
+      </div>
+      <div style="display:flex;gap:8px;">
+        ${next?`<button class="uc-nav-btn accent" onclick="openUC('${next.num}')">UC${next.num} &#8594;</button>`:''}
+        <button class="uc-nav-btn" onclick="showScreen('s-dashboard')">Risk Dashboard</button>
+      </div>
+    </div>
+  `;
+  showScreen('s-detail');
+}
+
+function switchTab(btn,panelId){
+  const wrap=btn.closest('.tabs-wrap');
+  wrap.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  wrap.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+function getReduction(){return Math.min(CONTROLS.filter(c=>ctrlState[c.id]).reduce((s,c)=>s+c.impact,0),90);}
+
+function renderDashboard(){
+  const r=getReduction();
+  const highCount=DOMAIN_RISKS.filter(d=>d.level==='high').length;
+  const medCount=DOMAIN_RISKS.filter(d=>d.level==='med').length;
+  const protectedCount=Math.round((highCount+medCount)*r/100);
+  const activeCount=CONTROLS.filter(c=>ctrlState[c.id]).length;
+  const fraudReduction=Math.round(4900000*r/100);
+  const hourssaved=Math.round(340*r/100);
+
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric-card"><div class="metric-card-label">Total Domains</div><div class="metric-card-val purple">12</div><div class="metric-card-sub">${protectedCount} protected, ${12-protectedCount} exposed</div></div>
+    <div class="metric-card"><div class="metric-card-label">Risk Reduction</div><div class="metric-card-val ok">${r}%</div><div class="metric-card-trend up">${activeCount} of ${CONTROLS.length} controls active</div></div>
+    <div class="metric-card"><div class="metric-card-label">Fraud Exposure Cut</div><div class="metric-card-val ok">$${(fraudReduction/1000000).toFixed(1)}M</div><div class="metric-card-sub">of $4.9M baseline</div></div>
+    <div class="metric-card"><div class="metric-card-label">SOX Hours Saved</div><div class="metric-card-val amber">${hourssaved}hrs</div><div class="metric-card-sub">per audit cycle</div></div>
+  `;
+
+  document.getElementById('fin-grid').innerHTML=`
+    <div class="fin-card"><div class="fin-card-icon red">&#9650;</div><div class="fin-card-val">$4.9M</div><div class="fin-card-label">Average cost of ERP-related breach (IBM 2024)</div></div>
+    <div class="fin-card"><div class="fin-card-icon amber">&#9632;</div><div class="fin-card-val">74%</div><div class="fin-card-label">Of ERP fraud originates from internal identity misuse</div></div>
+    <div class="fin-card"><div class="fin-card-icon green">&#10003;</div><div class="fin-card-val">$${(fraudReduction/1000000).toFixed(1)}M</div><div class="fin-card-label">Estimated exposure reduced with current controls active</div></div>
+    <div class="fin-card"><div class="fin-card-icon purple">&#9632;</div><div class="fin-card-val">${hourssaved}hrs</div><div class="fin-card-label">SOX audit preparation time saved per cycle</div></div>
+  `;
+
+  document.getElementById('controls-grid').innerHTML=CONTROLS.map(c=>`
+    <div class="control-item ${ctrlState[c.id]?'on':''}">
+      <div class="control-item-left">
+        <span class="control-item-name">${c.label}</span>
+        <span class="control-item-impact">${ctrlState[c.id]?'&#10003; Active — reduces risk by '+c.impact+'%':c.detail}</span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" ${ctrlState[c.id]?'checked':''} onchange="toggleCtrl('${c.id}')">
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  `).join('');
+
+  document.getElementById('risk-rows').innerHTML=DOMAIN_RISKS.map(d=>{
+    const mitigated=Math.max(Math.round(d.pct*(1-r/100)),5);
+    const lvl=mitigated>65?'high':mitigated>35?'med':'low';
+    return`<div class="risk-row">
+      <div class="risk-row-label">${d.name}</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill ${lvl}" style="width:${mitigated}%"></div></div>
+      <div class="risk-pct ${lvl}">${mitigated}%</div>
+      <div class="risk-row-impact">${d.impact}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCtrl(id){ctrlState[id]=!ctrlState[id];renderDashboard();}
+
+function openModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
+function submitModal(){
+  document.querySelector('.modal-form').innerHTML='<div style="text-align:center;padding:2rem 0;"><div style="font-size:2rem;margin-bottom:1rem;">&#10003;</div><div style="font-size:1.1rem;font-weight:600;color:var(--green);margin-bottom:8px;">Session Requested</div><div style="font-size:14px;color:var(--muted);">We\'ll be in touch within 24 hours to schedule your tailored IAM for ERP walkthrough.</div></div>';
+  setTimeout(closeModal,2500);
+}
+
+// ── ROADMAP PHASES ───────────────────────────
+const PHASES = {
+  1: {
+    badge: '#A100FF', title: 'Foundation & Authentication', sub: 'Months 1–3 · Immediate risk reduction',
+    deliverables: ['Deploy Identity Broker (Okta / Azure AD / Ping)', 'Enable SSO across all ERP systems', 'Enforce MFA for all ERP logins', 'Configure context-aware access policies', 'Federated identity for external vendors'],
+    activities: ['ERP connector configuration', 'User migration from local to federated accounts', 'MFA rollout and user training', 'Policy rule definition workshops', 'Vendor portal setup'],
+    risks: ['User adoption resistance to MFA', 'ERP connector compatibility gaps', 'Legacy system SSO limitations', 'Temporary productivity dip during migration'],
+    outcomes: ['100% MFA coverage', 'Zero shared ERP accounts', 'Federated vendor access', 'Audit trail for every login']
+  },
+  2: {
+    badge: '#1565C0', title: 'Governance & SoD Enforcement', sub: 'Months 3–6 · Compliance and lifecycle control',
+    deliverables: ['Deploy IGA platform (SailPoint / Saviynt / One Identity)', 'HRIS integration for joiner-mover-leaver automation', 'SoD ruleset definition and deployment', 'Role catalogue creation for all ERP roles', 'Quarterly certification workflows'],
+    activities: ['SoD conflict analysis of current user population', 'Role mining and clean-up exercise', 'HRIS-to-IGA connector configuration', 'Manager certification portal setup', 'SoD exception process design'],
+    risks: ['Large-scale SoD remediation may disrupt operations', 'Role catalogue complexity in multi-entity environments', 'Manager certification fatigue', 'Data quality issues in HRIS'],
+    outcomes: ['Automated Day 1 provisioning', 'SoD enforced at provisioning', 'Zero orphan accounts on departure', 'Quarterly certification active']
+  },
+  3: {
+    badge: '#00875A', title: 'Privileged Access Management', sub: 'Months 6–9 · High-risk transaction control',
+    deliverables: ['Deploy PAM platform (CyberArk / BeyondTrust / Delinea)', 'Classify high-risk ERP transactions', 'Configure just-in-time elevation workflows', 'Enable full session recording for privileged sessions', 'Dual approval workflows for critical actions'],
+    activities: ['High-risk transaction inventory per ERP module', 'PAM vault configuration', 'Approval workflow design and testing', 'Session recording storage and retention setup', 'Emergency access process design'],
+    risks: ['PAM friction on legitimate high-frequency transactions', 'Session recording storage costs', 'Approval chain bottlenecks', 'Performance impact of session recording'],
+    outcomes: ['All privileged sessions recorded', 'JIT access for high-risk actions', 'Dual approval on payroll/bank changes', 'Zero permanent elevated access']
+  },
+  4: {
+    badge: '#D68910', title: 'Continuous Compliance & Analytics', sub: 'Months 9–12 · Audit automation and intelligence',
+    deliverables: ['Continuous SoD monitoring dashboard', 'Automated SOX evidence package generation', 'Risk scoring and anomaly detection', 'Executive identity risk dashboard', 'Integration with GRC platform (if applicable)'],
+    activities: ['SOX evidence package design and automation', 'Risk scoring model calibration', 'Executive dashboard rollout', 'Internal audit team training on IGA evidence', 'GRC integration (ServiceNow / Archer)'],
+    risks: ['False positive alerts causing alert fatigue', 'GRC integration complexity', 'Change management for audit team workflows', 'Ongoing rule maintenance overhead'],
+    outcomes: ['SOX evidence on demand', 'Continuous SoD monitoring', 'Risk-based access reviews', '340+ hrs audit prep saved/yr']
+  }
+};
+
+function showPhase(num, card) {
+  document.querySelectorAll('.phase-card').forEach(c => c.classList.remove('active-phase'));
+  card.classList.add('active-phase');
+  const p = PHASES[num];
+  const dotColors = ['#A100FF','#1565C0','#00875A','#D68910'];
+  const dc = dotColors[num-1];
+  document.getElementById('phase-detail').innerHTML = `
+    <div class="phase-detail-header">
+      <div class="phase-detail-badge" style="background:${dc};">P${num}</div>
+      <div>
+        <div class="phase-detail-title">${p.title}</div>
+        <div class="phase-detail-sub">${p.sub}</div>
+      </div>
+    </div>
+    <div class="phase-columns">
+      <div>
+        <div class="phase-col-title">Key Deliverables</div>
+        ${p.deliverables.map(d=>`<div class="phase-item"><div class="phase-item-dot" style="background:${dc};"></div><div class="phase-item-text">${d}</div></div>`).join('')}
+      </div>
+      <div>
+        <div class="phase-col-title">Activities</div>
+        ${p.activities.map(a=>`<div class="phase-item"><div class="phase-item-dot" style="background:#6B6B8A;"></div><div class="phase-item-text">${a}</div></div>`).join('')}
+      </div>
+      <div>
+        <div class="phase-col-title">Risks to Manage</div>
+        ${p.risks.map(r=>`<div class="phase-item"><div class="phase-item-dot" style="background:#D63031;"></div><div class="phase-item-text">${r}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="phase-outcomes">
+      <div class="phase-outcomes-title">&#10003; Outcomes at completion of this phase</div>
+      <div class="phase-outcomes-grid">${p.outcomes.map(o=>`<div class="outcome-chip">&#10003; ${o}</div>`).join('')}</div>
+    </div>
+  `;
+  document.getElementById('phase-detail').classList.add('visible');
+}
+
+showPhase(1, document.querySelector('.phase-card'));
+
+// ── ROI CALCULATOR ───────────────────────────
+function fmt(n) {
+  if(n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if(n >= 1000) return '$' + Math.round(n/1000) + 'K';
+  return '$' + Math.round(n);
+}
+function fmtHrs(n) { return Math.round(n).toLocaleString() + ' hrs'; }
+
+function updateROI() {
+  const users = parseInt(document.getElementById('r-users').value);
+  const payroll = parseInt(document.getElementById('r-payroll').value) * 1000000;
+  const ap = parseInt(document.getElementById('r-ap').value) * 1000000;
+  const hires = parseInt(document.getElementById('r-hires').value);
+  const sox = parseInt(document.getElementById('r-sox').value);
+  const rate = parseInt(document.getElementById('r-rate').value);
+
+  document.getElementById('v-users').textContent = users.toLocaleString();
+  document.getElementById('v-payroll').textContent = '$' + parseInt(document.getElementById('r-payroll').value) + 'M';
+  document.getElementById('v-ap').textContent = '$' + parseInt(document.getElementById('r-ap').value) + 'M';
+  document.getElementById('v-hires').textContent = hires.toLocaleString();
+  document.getElementById('v-sox').textContent = sox;
+  document.getElementById('v-rate').textContent = '$' + rate;
+
+  // Calculations
+  const ghostVendor = ap * 0.008;
+  const payrollFraud = payroll * 0.003;
+  const bec = ap * 0.0012;
+  const fraudTotal = ghostVendor + payrollFraud + bec;
+
+  const onboardingHrs = hires * 6.3 - hires * (4/8); // 6.3 days vs 4 hours
+  const onboardingSaving = onboardingHrs * rate;
+
+  const sodHrs = users * 1.2;
+  const sodSaving = sodHrs * rate * 0.7;
+
+  const soxHrs = 340 * sox;
+  const soxSaving = soxHrs * rate;
+
+  const itProvHrs = hires * 3.5;
+  const itProvSaving = itProvHrs * rate;
+
+  const totalSaving = fraudTotal * 0.85 + onboardingSaving + sodSaving + soxSaving + itProvSaving;
+  const totalHrs = Math.round(onboardingHrs + sodHrs * 0.7 + soxHrs + itProvHrs);
+  const breachReduction = 4880000 * 0.65;
+  const roiPct = Math.round((totalSaving / 500000) * 100); // assume $500K implementation cost
+
+  document.getElementById('roi-results').innerHTML = `
+    <div class="result-card">
+      <div class="result-icon red">&#9650;</div>
+      <div>
+        <div class="result-val red">${fmt(fraudTotal)}</div>
+        <div class="result-label">Annual fraud exposure addressed<br>(ghost vendors · payroll · BEC)</div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="result-icon green">&#10003;</div>
+      <div>
+        <div class="result-val green">${fmt(totalSaving)}</div>
+        <div class="result-label">Estimated total annual savings<br>(fraud prevention + efficiency gains)</div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="result-icon purple">&#9632;</div>
+      <div>
+        <div class="result-val purple">${fmtHrs(totalHrs)}</div>
+        <div class="result-label">Staff hours saved per year<br>(IT provisioning · SOX · SoD remediation)</div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="result-icon amber">&#9650;</div>
+      <div>
+        <div class="result-val amber">${fmt(breachReduction)}</div>
+        <div class="result-label">Breach cost reduction<br>(65% of $4.88M industry average)</div>
+      </div>
+    </div>
+    <div class="roi-summary">
+      <div class="roi-summary-title">Summary at a Glance</div>
+      <div class="roi-summary-grid">
+        <div class="roi-summary-item"><div class="roi-summary-val">${fmt(totalSaving)}</div><div class="roi-summary-label">Total annual value</div></div>
+        <div class="roi-summary-item"><div class="roi-summary-val">${roiPct}%</div><div class="roi-summary-label">Estimated ROI vs implementation</div></div>
+        <div class="roi-summary-item"><div class="roi-summary-val">${fmtHrs(soxHrs)}</div><div class="roi-summary-label">SOX prep time saved/yr</div></div>
+        <div class="roi-summary-item"><div class="roi-summary-val">&lt;12 mo</div><div class="roi-summary-label">Typical payback period</div></div>
+      </div>
+    </div>
+  `;
+
+  const breakdowns = [
+    {label:'Ghost vendor & P2P fraud prevention', val:Math.round(ghostVendor*0.85), color:'#A100FF', max:fraudTotal},
+    {label:'Payroll fraud prevention', val:Math.round(payrollFraud*0.9), color:'#1565C0', max:fraudTotal},
+    {label:'Payment redirection (BEC) prevention', val:Math.round(bec*0.95), color:'#D63031', max:fraudTotal},
+    {label:'Employee onboarding efficiency', val:Math.round(onboardingSaving), color:'#00875A', max:totalSaving},
+    {label:'SOX audit preparation savings', val:Math.round(soxSaving), color:'#D68910', max:totalSaving},
+    {label:'IT provisioning automation', val:Math.round(itProvSaving), color:'#0077B6', max:totalSaving},
+  ];
+  const maxVal = Math.max(...breakdowns.map(b=>b.val));
+  document.getElementById('breakdown-rows').innerHTML = breakdowns.map(b=>`
+    <div class="breakdown-row">
+      <div class="breakdown-label">${b.label}</div>
+      <div class="breakdown-bar-wrap">
+        <div class="breakdown-bar-track">
+          <div class="breakdown-bar-fill" style="width:${Math.round(b.val/maxVal*100)}%;background:${b.color};opacity:0.7;"></div>
+        </div>
+      </div>
+      <div class="breakdown-val" style="color:${b.color};">${fmt(b.val)}</div>
+    </div>
+  `).join('');
+}
+
+updateROI();
+
+renderUCGrid('all');
+// Ensure all non-active screens are hidden on load
+document.querySelectorAll('.screen').forEach(function(s){
+  if(!s.classList.contains('active')) s.style.display='none';
+});
+</script>
+<!-- ═══════════════════════════════════════
+     SECTION 1 — ARCHITECTURE
+═══════════════════════════════════════ -->
+<div id="s-arch" class="screen" style="display:none;padding-top:60px;">
+<div class="section-inner">
+  <div class="page-header">
+    <div class="page-tag">Phase 5 · Architecture</div>
+    <h1 class="page-title">How <span>IAM, IGA & PAM</span> connect<br>to your ERP landscape</h1>
+    <p class="page-desc">A single identity layer sits across all your ERP systems — governing who gets in, what they can do, and recording everything that matters.</p>
+  </div>
+
+  <div class="arch-intro">
+    <div class="arch-intro-card iam">
+      <div class="arch-intro-icon">🔐</div>
+      <div class="arch-intro-title">IAM — Identity & Access Management</div>
+      <div class="arch-intro-desc">The front door. Authenticates every user via SSO and MFA before they reach any ERP system. Enforces context-aware access policies.</div>
+    </div>
+    <div class="arch-intro-card iga">
+      <div class="arch-intro-icon">⚙️</div>
+      <div class="arch-intro-title">IGA — Identity Governance</div>
+      <div class="arch-intro-desc">The rules engine. Enforces SoD rules, manages the joiner-mover-leaver lifecycle, and generates audit evidence automatically.</div>
+    </div>
+    <div class="arch-intro-card pam">
+      <div class="arch-intro-icon">🛡️</div>
+      <div class="arch-intro-title">PAM — Privileged Access Management</div>
+      <div class="arch-intro-desc">The vault. Controls and records access to high-risk ERP actions — payroll runs, bank changes, depreciation — with session recording and dual approval.</div>
+    </div>
+  </div>
+
+  <!-- SVG Architecture Diagram -->
+  <div class="arch-diagram">
+    <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" font-family="Inter,sans-serif">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#A100FF" opacity="0.6"/>
+        </marker>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6B6B8A" opacity="0.5"/>
+        </marker>
+      </defs>
+
+      <!-- USERS row -->
+      <text x="450" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="#6B6B8A" letter-spacing="1">USERS &amp; IDENTITIES</text>
+      <!-- User boxes -->
+      <g>
+        <rect x="40" y="38" width="110" height="48" rx="8" fill="#F3E5FF" stroke="#E8D0FF" stroke-width="1"/>
+        <text x="95" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Employees</text>
+        <text x="95" y="74" text-anchor="middle" font-size="10" fill="#8888A0">Internal staff</text>
+      </g>
+      <g>
+        <rect x="170" y="38" width="110" height="48" rx="8" fill="#F3E5FF" stroke="#E8D0FF" stroke-width="1"/>
+        <text x="225" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Contractors</text>
+        <text x="225" y="74" text-anchor="middle" font-size="10" fill="#8888A0">Temp workers</text>
+      </g>
+      <g>
+        <rect x="300" y="38" width="110" height="48" rx="8" fill="#F3E5FF" stroke="#E8D0FF" stroke-width="1"/>
+        <text x="355" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Vendors</text>
+        <text x="355" y="74" text-anchor="middle" font-size="10" fill="#8888A0">External partners</text>
+      </g>
+      <g>
+        <rect x="430" y="38" width="110" height="48" rx="8" fill="#F3E5FF" stroke="#E8D0FF" stroke-width="1"/>
+        <text x="485" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Auditors</text>
+        <text x="485" y="74" text-anchor="middle" font-size="10" fill="#8888A0">External review</text>
+      </g>
+      <g>
+        <rect x="560" y="38" width="110" height="48" rx="8" fill="#F3E5FF" stroke="#E8D0FF" stroke-width="1"/>
+        <text x="615" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Admins</text>
+        <text x="615" y="74" text-anchor="middle" font-size="10" fill="#8888A0">IT &amp; ERP teams</text>
+      </g>
+      <g>
+        <rect x="690" y="38" width="110" height="48" rx="8" fill="#F3E5FF" stroke="#E8D0FF" stroke-width="1"/>
+        <text x="745" y="58" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Shop Floor</text>
+        <text x="745" y="74" text-anchor="middle" font-size="10" fill="#8888A0">RFID + PIN</text>
+      </g>
+
+      <!-- Arrows down to IAM layer -->
+      <line x1="95" y1="86" x2="200" y2="148" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+      <line x1="225" y1="86" x2="280" y2="148" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+      <line x1="355" y1="86" x2="380" y2="148" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+      <line x1="485" y1="86" x2="450" y2="148" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+      <line x1="615" y1="86" x2="560" y2="148" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+      <line x1="745" y1="86" x2="660" y2="148" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+
+      <!-- IAM LAYER -->
+      <rect x="40" y="148" width="820" height="72" rx="12" fill="#A100FF" opacity="0.08" stroke="#A100FF" stroke-width="1.5"/>
+      <rect x="40" y="148" width="820" height="72" rx="12" fill="none" stroke="#A100FF" stroke-width="1.5"/>
+      <text x="450" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#A100FF" letter-spacing="0.5">IDENTITY &amp; ACCESS MANAGEMENT (IAM) — Identity Broker Layer</text>
+      <rect x="70" y="180" width="120" height="26" rx="6" fill="#A100FF" opacity="0.15"/>
+      <text x="130" y="197" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">SSO / Federation</text>
+      <rect x="210" y="180" width="120" height="26" rx="6" fill="#A100FF" opacity="0.15"/>
+      <text x="270" y="197" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">MFA Enforcement</text>
+      <rect x="350" y="180" width="140" height="26" rx="6" fill="#A100FF" opacity="0.15"/>
+      <text x="420" y="197" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Context-Aware Policy</text>
+      <rect x="510" y="180" width="130" height="26" rx="6" fill="#A100FF" opacity="0.15"/>
+      <text x="575" y="197" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Session Management</text>
+      <rect x="660" y="180" width="170" height="26" rx="6" fill="#A100FF" opacity="0.15"/>
+      <text x="745" y="197" text-anchor="middle" font-size="11" font-weight="600" fill="#7B00CC">Token Issuance (SAML/OIDC)</text>
+
+      <!-- IGA + PAM row -->
+      <line x1="200" y1="220" x2="165" y2="256" stroke="#1565C0" stroke-width="1.5" opacity="0.4" marker-end="url(#arr2)"/>
+      <line x1="680" y1="220" x2="700" y2="256" stroke="#00875A" stroke-width="1.5" opacity="0.4" marker-end="url(#arr2)"/>
+
+      <!-- IGA Box -->
+      <rect x="40" y="256" width="360" height="80" rx="10" fill="#E8F0FE" stroke="#B3CCF7" stroke-width="1.5"/>
+      <text x="220" y="278" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">IDENTITY GOVERNANCE &amp; ADMINISTRATION (IGA)</text>
+      <rect x="60" y="288" width="90" height="34" rx="6" fill="white" stroke="#B3CCF7" stroke-width="1"/>
+      <text x="105" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="#1565C0">SoD</text>
+      <text x="105" y="316" text-anchor="middle" font-size="10" fill="#6B6B8A">Enforcement</text>
+      <rect x="165" y="288" width="90" height="34" rx="6" fill="white" stroke="#B3CCF7" stroke-width="1"/>
+      <text x="210" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="#1565C0">JML</text>
+      <text x="210" y="316" text-anchor="middle" font-size="10" fill="#6B6B8A">Lifecycle</text>
+      <rect x="270" y="288" width="110" height="34" rx="6" fill="white" stroke="#B3CCF7" stroke-width="1"/>
+      <text x="325" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="#1565C0">Audit</text>
+      <text x="325" y="316" text-anchor="middle" font-size="10" fill="#6B6B8A">Evidence Gen</text>
+
+      <!-- PAM Box -->
+      <rect x="500" y="256" width="360" height="80" rx="10" fill="#E3FFF4" stroke="#9FE1CB" stroke-width="1.5"/>
+      <text x="680" y="278" text-anchor="middle" font-size="12" font-weight="700" fill="#00875A">PRIVILEGED ACCESS MANAGEMENT (PAM)</text>
+      <rect x="520" y="288" width="90" height="34" rx="6" fill="white" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="565" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="#00875A">JIT</text>
+      <text x="565" y="316" text-anchor="middle" font-size="10" fill="#6B6B8A">Elevation</text>
+      <rect x="625" y="288" width="100" height="34" rx="6" fill="white" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="675" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="#00875A">Session</text>
+      <text x="675" y="316" text-anchor="middle" font-size="10" fill="#6B6B8A">Recording</text>
+      <rect x="740" y="288" width="100" height="34" rx="6" fill="white" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="790" y="303" text-anchor="middle" font-size="10" font-weight="600" fill="#00875A">Dual</text>
+      <text x="790" y="316" text-anchor="middle" font-size="10" fill="#6B6B8A">Approval</text>
+
+      <!-- HRIS connector -->
+      <rect x="40" y="256" width="0" height="0"/>
+      <!-- Arrows down to ERP -->
+      <line x1="220" y1="336" x2="180" y2="386" stroke="#1565C0" stroke-width="1.5" opacity="0.4" marker-end="url(#arr2)"/>
+      <line x1="680" y1="336" x2="720" y2="386" stroke="#00875A" stroke-width="1.5" opacity="0.4" marker-end="url(#arr2)"/>
+      <line x1="450" y1="220" x2="450" y2="386" stroke="#A100FF" stroke-width="1.5" opacity="0.3" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+      <!-- ERP SYSTEMS row -->
+      <text x="450" y="408" text-anchor="middle" font-size="11" font-weight="700" fill="#6B6B8A" letter-spacing="1">ERP SYSTEMS</text>
+      <rect x="40" y="416" width="120" height="52" rx="8" fill="white" stroke="#E5E0F0" stroke-width="1.5"/>
+      <text x="100" y="438" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">SAP</text>
+      <text x="100" y="454" text-anchor="middle" font-size="10" fill="#6B6B8A">S/4HANA · ECC</text>
+      <rect x="180" y="416" width="120" height="52" rx="8" fill="white" stroke="#E5E0F0" stroke-width="1.5"/>
+      <text x="240" y="438" text-anchor="middle" font-size="12" font-weight="700" fill="#D63031">Oracle</text>
+      <text x="240" y="454" text-anchor="middle" font-size="10" fill="#6B6B8A">Fusion · EBS</text>
+      <rect x="320" y="416" width="120" height="52" rx="8" fill="white" stroke="#E5E0F0" stroke-width="1.5"/>
+      <text x="380" y="438" text-anchor="middle" font-size="12" font-weight="700" fill="#00875A">Workday</text>
+      <text x="380" y="454" text-anchor="middle" font-size="10" fill="#6B6B8A">HR · Finance</text>
+      <rect x="460" y="416" width="120" height="52" rx="8" fill="white" stroke="#E5E0F0" stroke-width="1.5"/>
+      <text x="520" y="438" text-anchor="middle" font-size="12" font-weight="700" fill="#0077B6">Dynamics</text>
+      <text x="520" y="454" text-anchor="middle" font-size="10" fill="#6B6B8A">365 · F&amp;O</text>
+      <rect x="600" y="416" width="120" height="52" rx="8" fill="white" stroke="#E5E0F0" stroke-width="1.5"/>
+      <text x="660" y="438" text-anchor="middle" font-size="12" font-weight="700" fill="#D68910">Infor</text>
+      <text x="660" y="454" text-anchor="middle" font-size="10" fill="#6B6B8A">LN · CloudSuite</text>
+      <rect x="740" y="416" width="120" height="52" rx="8" fill="white" stroke="#E5E0F0" stroke-width="1.5"/>
+      <text x="800" y="438" text-anchor="middle" font-size="12" font-weight="700" fill="#7B00CC">Other ERP</text>
+      <text x="800" y="454" text-anchor="middle" font-size="10" fill="#6B6B8A">SCIM · REST API</text>
+
+      <!-- HRIS box -->
+      <rect x="40" y="490" width="180" height="26" rx="6" fill="#FFF8E8" stroke="#F5D37A" stroke-width="1"/>
+      <text x="130" y="507" text-anchor="middle" font-size="11" font-weight="600" fill="#D68910">HRIS Source of Truth (Workday / SuccessFactors)</text>
+      <line x1="220" y1="336" x2="130" y2="490" stroke="#D68910" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- Authentication flow -->
+  <div class="flow-section">
+    <div class="flow-title">Authentication flow — step by step</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-box purple">
+          <div class="flow-box-num">01</div>
+          <div class="flow-box-label">User Requests Access</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box blue">
+          <div class="flow-box-num">02</div>
+          <div class="flow-box-label">SSO Identity Verified</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box amber">
+          <div class="flow-box-num">03</div>
+          <div class="flow-box-label">MFA Challenge</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box teal">
+          <div class="flow-box-num">04</div>
+          <div class="flow-box-label">IGA SoD Check</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box green">
+          <div class="flow-box-num">05</div>
+          <div class="flow-box-label">Role & Scope Applied</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box blue">
+          <div class="flow-box-num">06</div>
+          <div class="flow-box-label">ERP Session Starts</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box amber">
+          <div class="flow-box-num">07</div>
+          <div class="flow-box-label">High-Risk Action → PAM</div>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-box green">
+          <div class="flow-box-num">✓</div>
+          <div class="flow-box-label">Full Audit Trail Written</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 2 — ROADMAP
+═══════════════════════════════════════ -->
+<div id="s-roadmap" class="screen" style="display:none;padding-top:60px;">
+<div class="section-inner">
+  <div class="page-header">
+    <div class="page-tag">Phase 5 · Roadmap</div>
+    <h1 class="page-title">Implementation Roadmap —<br><span>4 Phases, 12 Months</span></h1>
+    <p class="page-desc">A proven deployment sequence that delivers measurable value at each phase — starting with the highest-risk controls and building towards full lifecycle governance.</p>
+  </div>
+
+  <div class="roadmap-overview">
+    <div class="phase-card phase-1 active-phase" onclick="showPhase(1,this)">
+      <div class="phase-num">Phase 1 — Months 1–3</div>
+      <div class="phase-title">Foundation & Authentication</div>
+      <div class="phase-duration">SSO · MFA · Identity Broker</div>
+    </div>
+    <div class="phase-card phase-2" onclick="showPhase(2,this)">
+      <div class="phase-num">Phase 2 — Months 3–6</div>
+      <div class="phase-title">Governance & SoD</div>
+      <div class="phase-duration">IGA · SoD Rules · Lifecycle</div>
+    </div>
+    <div class="phase-card phase-3" onclick="showPhase(3,this)">
+      <div class="phase-num">Phase 3 — Months 6–9</div>
+      <div class="phase-title">Privileged Access Control</div>
+      <div class="phase-duration">PAM · Session Recording · JIT</div>
+    </div>
+    <div class="phase-card phase-4" onclick="showPhase(4,this)">
+      <div class="phase-num">Phase 4 — Months 9–12</div>
+      <div class="phase-title">Continuous Compliance</div>
+      <div class="phase-duration">Audit Automation · Analytics</div>
+    </div>
+  </div>
+
+  <div id="phase-detail" class="phase-detail visible">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Timeline bar -->
+  <div class="timeline-bar">
+    <div class="timeline-bar-title">12-Month Deployment Timeline</div>
+    <div class="timeline-months">
+      <div class="timeline-month">M1</div><div class="timeline-month">M2</div>
+      <div class="timeline-month">M3</div><div class="timeline-month">M4</div>
+      <div class="timeline-month">M5</div><div class="timeline-month">M6</div>
+      <div class="timeline-month">M7</div><div class="timeline-month">M8</div>
+      <div class="timeline-month">M9</div><div class="timeline-month">M10</div>
+      <div class="timeline-month">M11</div><div class="timeline-month">M12</div>
+    </div>
+    <div class="timeline-phases">
+      <div class="timeline-phase-row">
+        <div class="timeline-phase-label">Phase 1 — Foundation</div>
+        <div class="timeline-phase-bar-track">
+          <div class="timeline-phase-bar" style="width:25%;background:#A100FF;">SSO · MFA · Broker</div>
+        </div>
+      </div>
+      <div class="timeline-phase-row">
+        <div class="timeline-phase-label">Phase 2 — Governance</div>
+        <div class="timeline-phase-bar-track">
+          <div class="timeline-phase-bar" style="width:25%;margin-left:25%;background:#1565C0;">IGA · SoD · Lifecycle</div>
+        </div>
+      </div>
+      <div class="timeline-phase-row">
+        <div class="timeline-phase-label">Phase 3 — PAM</div>
+        <div class="timeline-phase-bar-track">
+          <div class="timeline-phase-bar" style="width:25%;margin-left:50%;background:#00875A;">PAM · JIT · Recording</div>
+        </div>
+      </div>
+      <div class="timeline-phase-row">
+        <div class="timeline-phase-label">Phase 4 — Compliance</div>
+        <div class="timeline-phase-bar-track">
+          <div class="timeline-phase-bar" style="width:25%;margin-left:75%;background:#D68910;">Audit · Analytics</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 3 — ROI CALCULATOR
+═══════════════════════════════════════ -->
+<div id="s-roi" class="screen" style="display:none;padding-top:60px;">
+<div class="section-inner">
+  <div class="page-header">
+    <div class="page-tag">Phase 5 · ROI Calculator</div>
+    <h1 class="page-title">What does IAM for ERP<br><span>save your organisation?</span></h1>
+    <p class="page-desc">Adjust the inputs below to match your organisation's profile. The calculator estimates your financial exposure, potential savings, and efficiency gains.</p>
+  </div>
+
+  <div class="roi-layout">
+    <div class="roi-inputs">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">Your Organisation Profile</div>
+      <div class="input-group">
+        <div class="input-label">Number of ERP Users <span class="input-val" id="v-users">1,000</span></div>
+        <input type="range" min="100" max="10000" step="100" value="1000" oninput="updateROI()" id="r-users">
+        <div class="input-sublabel">Total headcount with ERP access</div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">Annual Payroll Volume <span class="input-val" id="v-payroll">$50M</span></div>
+        <input type="range" min="1" max="500" step="1" value="50" oninput="updateROI()" id="r-payroll">
+        <div class="input-sublabel">Total annual payroll processed through ERP ($M)</div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">Annual AP Spend <span class="input-val" id="v-ap">$100M</span></div>
+        <input type="range" min="5" max="2000" step="5" value="100" oninput="updateROI()" id="r-ap">
+        <div class="input-sublabel">Total annual accounts payable spend ($M)</div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">Annual Hires <span class="input-val" id="v-hires">200</span></div>
+        <input type="range" min="10" max="2000" step="10" value="200" oninput="updateROI()" id="r-hires">
+        <div class="input-sublabel">New employees onboarded per year</div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">SOX Audit Cycles per Year <span class="input-val" id="v-sox">2</span></div>
+        <input type="range" min="1" max="4" step="1" value="2" oninput="updateROI()" id="r-sox">
+        <div class="input-sublabel">Number of internal/external audit cycles annually</div>
+      </div>
+      <div class="input-group" style="margin-bottom:0;">
+        <div class="input-label">IT Cost per Hour <span class="input-val" id="v-rate">$85</span></div>
+        <input type="range" min="40" max="200" step="5" value="85" oninput="updateROI()" id="r-rate">
+        <div class="input-sublabel">Blended hourly rate for IT/security staff ($)</div>
+      </div>
+    </div>
+
+    <div class="roi-results" id="roi-results">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <div class="roi-breakdown card" style="margin-top:1.5rem;">
+    <div class="roi-breakdown-title">Savings Breakdown by Category</div>
+    <div id="breakdown-rows"></div>
+  </div>
+
+  <div class="assumptions">
+    <div class="assumptions-title">Calculation Assumptions</div>
+    <div class="assumptions-text">
+      Fraud prevention based on industry averages: ghost vendor fraud = 0.8% of AP spend; payroll fraud = 0.3% of payroll; payment redirection = 0.12% of AP spend.
+      Onboarding savings based on 6-day → 4-hour reduction × IT hourly rate.
+      SOX preparation based on 340hrs per cycle benchmark (Protiviti ERP Access Control Survey).
+      Breach cost based on IBM Cost of Data Breach Report 2024 average of $4.88M.
+      These are estimates — actual savings will vary based on your current control environment, ERP configuration, and organisation structure.
+    </div>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>
